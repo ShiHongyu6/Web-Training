@@ -1,8 +1,21 @@
+html, body{
+    margin: 0;
+    width: 100%;
+    min-width: 500px;
+}
+
+.main{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .nav{
-    height: 48px;
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    height: 48px;
+    padding: 8px 8px 8px 8px;
 }
 
 .nav > a{
@@ -11,80 +24,83 @@
     margin: 5px;
 }
 
-.center{
-    margin: 0 auto;
+.logo{
+    display: flex;
+    margin-top: 108px;
+    margin-bottom: 38px;
+    justify-content: center;
 }
 
-#logo{
-    width: 272px;
+.search{
+    display: flex;
+    width:100%;
+    height: 44px;
+    justify-content: center;
 }
 
-#search{
-    margin: 20px auto;
-    width: 469px; 
-    height: 42px;
-    border-color: darkgrey;
+.search_input{
+    display: flex;
+    width: 60%;
+    max-width: 469px;
+    border-color: #ddd;
     border-radius: 23px;
     border-style: solid;
     line-height: 40px;
     font-size: 20px;
-    padding: 0 40px;
+    padding: 0 40px 0 52px;
     outline: none;
 }
 
-
-#search:focus{
-    border-color: #000;
+.search_input:focus{
+    border-color: #bbb;
 }
 
-.search_box{
-    width: 549px;
-}
-
-#icon_search{
+.icon_search{
     position: relative;
-    top: 73px;
-    left: 12px;
+    left: 35px;
+    top: 11px;
+    width: 20px;
+    height: 20px;
     background: url(../img/search.svg);
     background-repeat: no-repeat;
 }
 
-#icon_mic{
+.icon_mic{
     position: relative;
-    top: -55px;
-    left: 517px;
+    left: -34px;
+    top: 10px;
+    width: 20px;
+    height: 20px;
     background: url(../img/googlemic_clr_24px.svg);
     background-repeat: no-repeat;
 }
 
-#icon_mic a{
+.icon_btn{
     display: block;
-}
-
-.icon_block{
     width: 40px;
     height: 40px;
 }
 
-#logo::before{
-    display: block;
-    content:"";
-    height: 200px;
+.container_bookmarks{
+    display: flex;
+    justify-content: flex-start;
+    width: 60%;
+    max-width: 461px;
+    margin-top: 38px;
 }
 
 
-#bookmarks_list{
-    width: 553px;
-    align-items: center;
-}
 
 .bookmark_block{
     color: black;
-    display: inline-block;
-    width: 100px;
-    height: 100px;
-    border-radius: 5%;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 112px;
+    height: 96px;
+    border-radius: 5px;
+    padding-top: 16px;
+    margin-bottom: 16px;
     text-decoration: none;
 }
 
@@ -93,8 +109,8 @@
 }
 
 .icon_bookmark_block{
-    height: 53px;
-    padding-top: 17px;
+    width: 48px;
+    height: 48px;
 }
 
 .icon_bookmark{
@@ -112,8 +128,12 @@
     height: 24px;
 }
 
-.name_bookmark{
-    height: 30px;
+.title_bookmark{
+    width: 88px;
+    height: 24px;
+    padding: 0 8px 0 8px;
+    margin-top: 7px;
     line-height: 30px;
     font-size: 14px;
+    text-align: center;
 }
