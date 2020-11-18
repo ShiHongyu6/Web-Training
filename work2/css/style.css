@@ -14,7 +14,7 @@ a{
     text-decoration: none;
 }
 
-.caculator{
+.calculator{
     display:flex;
     flex-direction: column;
     width: 50%;
@@ -129,14 +129,14 @@ a{
     margin-bottom: 30px;
 }
 
-.box_functionalkey{
+.box_functional_key{
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-items: flex-start;
 }
 
-.box_functionalkey>a{
+.box_functional_key>a{
     display: black;
     width: 60px;
     height: 30px;
@@ -149,7 +149,7 @@ a{
     align-items: center;
 }
 
-.box_functionalkey>a:hover, .key_row>div:hover, .top_btn>a:hover , .nav a:hover{
+.box_functional_key>a:hover, .key_row>div:hover, .top_btn>a:hover , .nav a:hover{
     background-color: #ddd;
     border-color: #aaa;
 }
@@ -159,7 +159,7 @@ a{
     align-items: stretch;
 }
 
-.box_biggerkey{
+.box_bigger_key{
     display: flex;
     flex-direction: column;
     flex-grow: 1;
