@@ -17,10 +17,10 @@ a{
 .caculator{
     display:flex;
     flex-direction: column;
-    width: 25%;
+    width: 50%;
     min-width: 324px;
     min-height: 460px;
-    background: #eee;
+    background-color: rgb(236, 236, 236);
 }
 
 .container_top{
@@ -32,6 +32,7 @@ a{
 .container_bottom{
     display: flex;
     flex-grow: 1;
+    flex-basis: 0;
     align-items: stretch;
 }
 
@@ -44,6 +45,7 @@ a{
 .title{
     display: flex;
     flex-grow: 1;
+    flex-basis: 0;
     justify-content: flex-start;
     padding: 8px 0 0 8px;
 }
@@ -51,6 +53,7 @@ a{
 .top_btn{
     display: flex;
     flex-grow: 1;
+    flex-basis: 0;
     justify-content: flex-end;
 }
 
@@ -77,6 +80,7 @@ a{
 .nav_left{
     display: flex;
     flex-grow: 1;
+    flex-basis: 0;
     justify-content: flex-start;
 }
 
@@ -86,14 +90,14 @@ a{
     height: 40px;
     justify-content: center;
     align-items: center;
-    font-style: italic;
-    font-size: 20px;
+    font-size: 15px;
 }
 
 .nav_mode{
     display: flex;
     width: 90px;
     height: 40px;
+    margin: 0 30px 0 30px;
     justify-content: center;
     align-items: center;
 }
@@ -102,6 +106,7 @@ a{
 .nav_right{
     display: flex;
     flex-grow: 1;
+    flex-basis: 0;
     justify-content: flex-end;
 }
 
@@ -114,26 +119,31 @@ a{
 .small_show{
     height: 20px;
     color: #aaa;
+    margin-top: 20px;
 }
 
 .big_show{
     height: 45px;
     font-size: 43px;
     color: #000;
+    margin-bottom: 30px;
 }
 
 .box_functionalkey{
     display: flex;
-    height: 30px;
+    flex-direction: row;
     align-items: center;
-    justify-items: center;
+    justify-items: flex-start;
 }
 
 .box_functionalkey>a{
-    display: flex;
-    flex-grow: 1;
-    height: 28px;
+    display: black;
+    width: 60px;
+    height: 30px;
+    line-height: 30px;
+    text-align: center;
     margin: 2px;
+    background-color: #eee;
     border: solid 1px #eee;
     justify-content: center;
     align-items: center;
@@ -153,29 +163,36 @@ a{
     display: flex;
     flex-direction: column;
     flex-grow: 1;
+    flex-basis: 0;
 }
 
 .key_row{
     display: flex;
     flex-grow: 1;
+    flex-basis: 0;
 }
 
 .key_row>div{
     display: flex;
     flex-grow: 1;
+    flex-basis: 0;
     margin: 2px;
     align-items: center;
     justify-content: center;
 }
 
 
-.bgcolor_blue{
+#equal_key{
    background-color: rgb(145, 193, 231); 
 }
 
-.bgcolor_white{
-    background-color: #fff;
+.op_key{
+    background-color: rgb(245, 245, 245);
 }
-#equal:hover{
+
+.number_key{
+    background-color: rgb(252, 252, 252);
+}
+#equal_key:hover{
     background-color: rgb(45, 133, 204);
 }
