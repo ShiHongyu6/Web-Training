@@ -1,0 +1,119 @@
+.nav{
+    height: 48px;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+}
+
+.nav > a{
+    text-decoration: none;
+    color: darkgrey;
+    margin: 5px;
+}
+
+.center{
+    margin: 0 auto;
+}
+
+#logo{
+    width: 272px;
+}
+
+#search{
+    margin: 20px auto;
+    width: 469px; 
+    height: 42px;
+    border-color: darkgrey;
+    border-radius: 23px;
+    border-style: solid;
+    line-height: 40px;
+    font-size: 20px;
+    padding: 0 40px;
+    outline: none;
+}
+
+
+#search:focus{
+    border-color: #000;
+}
+
+.search_box{
+    width: 549px;
+}
+
+#icon_search{
+    position: relative;
+    top: 73px;
+    left: 12px;
+    background: url(../img/search.svg);
+    background-repeat: no-repeat;
+}
+
+#icon_mic{
+    position: relative;
+    top: -55px;
+    left: 517px;
+    background: url(../img/googlemic_clr_24px.svg);
+    background-repeat: no-repeat;
+}
+
+#icon_mic a{
+    display: block;
+}
+
+.icon_block{
+    width: 40px;
+    height: 40px;
+}
+
+#logo::before{
+    display: block;
+    content:"";
+    height: 200px;
+}
+
+
+#bookmarks_list{
+    width: 553px;
+    align-items: center;
+}
+
+.bookmark_block{
+    color: black;
+    display: inline-block;
+    width: 100px;
+    height: 100px;
+    border-radius: 5%;
+    text-align: center;
+    text-decoration: none;
+}
+
+.bookmark_block:hover{
+    background-color: darkgrey;
+}
+
+.icon_bookmark_block{
+    height: 53px;
+    padding-top: 17px;
+}
+
+.icon_bookmark{
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #eee;
+}
+
+.icon_img{
+    width: 24px;
+    height: 24px;
+}
+
+.name_bookmark{
+    height: 30px;
+    line-height: 30px;
+    font-size: 14px;
+}
