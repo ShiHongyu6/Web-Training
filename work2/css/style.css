@@ -1,5 +1,12 @@
 html, body{
     width: 100%;
+    height: 100%;
+    margin: 0;
+}
+
+body{
+    display: flex;
+    justify-content: center;
 }
 
 a{
@@ -8,24 +15,51 @@ a{
 }
 
 .caculator{
-    width: 20%;
-    margin: 100px auto;
+    display:flex;
+    flex-direction: column;
+    width: 25%;
+    min-width: 324px;
+    min-height: 460px;
     background: #eee;
 }
 
+.container_top{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 0;
+}
+
+.container_bottom{
+    display: flex;
+    flex-grow: 1;
+    align-items: stretch;
+}
+
 .top{
+    display: flex;
     height: 40px;
-    display: grid;
-    grid-template-columns: 7fr 1fr 1fr 1fr;
-    align-items: center;
+    padding: 0 0 8px 8px;
+}
+
+.title{
+    display: flex;
+    flex-grow: 1;
+    justify-content: flex-start;
+    padding: 8px 0 0 8px;
 }
 
 .top_btn{
-    display: grid;
-    width: 100%;
-    height: 30px;
+    display: flex;
+    flex-grow: 1;
+    justify-content: flex-end;
+}
+
+.top_btn>a{
+    display: flex;
+    width: 50px;
+    height: 32px;
     align-items: center;
-    justify-items: center;
+    justify-content: center;
 }
 
 #close_btn:hover{
@@ -34,61 +68,106 @@ a{
 
 .nav{
     display:flex;
-    flex-direction: row;
     height: 50px;
     font-size: 25px;
+    justify-content: center;
     align-items: center;
-    justify-items: center;
 }
 
-#choice_mode{
-    width: 10%;
-    height: 60%;
-    margin: 1%;
+.nav_left{
+    display: flex;
+    flex-grow: 1;
+    justify-content: flex-start;
 }
 
-#mode{
-    width: 63%;
+.nav a{
+    display: flex;
+    width: 40px;
+    height: 40px;
+    justify-content: center;
+    align-items: center;
+    font-style: italic;
+    font-size: 20px;
 }
 
-.show{
-    padding-right: 30px;
-    height: 50px;
-    line-height: 50px;
-    font-size: 30px;
-    text-align: end;
+.nav_mode{
+    display: flex;
+    width: 90px;
+    height: 40px;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.nav_right{
+    display: flex;
+    flex-grow: 1;
+    justify-content: flex-end;
+}
+
+.show div{
+    display: flex;
+    justify-content: flex-end;
+    padding-right: 20px;
+}
+
+.small_show{
+    height: 20px;
+    color: #aaa;
+}
+
+.big_show{
+    height: 45px;
+    font-size: 43px;
+    color: #000;
 }
 
 .box_functionalkey{
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
-    grid-template-rows: 40px;
+    display: flex;
+    height: 30px;
     align-items: center;
     justify-items: center;
 }
 
-.functionalkey{
-    display: grid;
-    width: 90%;
-    height: 30px;
+.box_functionalkey>a{
+    display: flex;
+    flex-grow: 1;
+    height: 28px;
+    margin: 2px;
+    border: solid 1px #eee;
+    justify-content: center;
+    align-items: center;
+}
+
+.box_functionalkey>a:hover, .key_row>div:hover, .top_btn>a:hover , .nav a:hover{
+    background-color: #ddd;
+    border-color: #aaa;
+}
+
+.container{
+    display: flex;
+    align-items: stretch;
+}
+
+.box_biggerkey{
+    display: flex;
+    flex-direction: column;
+    flex-grow: 1;
+}
+
+.key_row{
+    display: flex;
+    flex-grow: 1;
+}
+
+.key_row>div{
+    display: flex;
+    flex-grow: 1;
     margin: 2px;
     align-items: center;
-    justify-items: center;
-    border: soild 1px white;
+    justify-content: center;
 }
 
-.functionalkey:hover, .numberkey:hover, .top_btn:hover , #choice_mode:hover{
-    background-color: #ddd;
-    outline: solid 1px #ccc;
-}
-
-.box_numberkey{
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr 1fr;
-    grid-template-rows: 50px 50px 50px 50px 50px 50px;
-    align-items: center;
-    justify-items: center;
-}
 
 .bgcolor_blue{
    background-color: rgb(145, 193, 231); 
@@ -97,17 +176,6 @@ a{
 .bgcolor_white{
     background-color: #fff;
 }
-
-.numberkey{
-    display: grid;
-    width: 90%;
-    height: 40px;
-    margin: 2px;
-    align-items: center;
-    justify-items: center;
-    border: soild 1px white;
-}
-
 #equal:hover{
     background-color: rgb(45, 133, 204);
 }
