@@ -1,41 +1,172 @@
 html,body {
+    margin: 0;
     width: 100%;
     height: 100%;
-    margin: 0;
 }
 
-.smiley {
+.figure {
+    position: relative;
+    top: 150px;
+    width: 360px;
+    margin: auto;
+    background-color: rgb(252, 233, 131);
+}
+
+.figure__head {
+    position: absolute;
+    width: 360px;
+    height: 100px;
+    top: -100px;
+    border-radius: 50% 50% 0 0;
+    background-color: rgb(252, 233, 131);
+}
+
+.figure__glass::before {
+    content: "";
+    display: inline-block;
+    width: 130px;
+    height: 130px;
+    position: absolute;
+    top: -15px;
+    left: 55px;
+    border-radius: 50%;
+    background-color: rgb(171, 174, 165);
+}
+
+.figure__glass::after {
+    content: "";
+    display: inline-block;
+    width: 130px;
+    height: 130px;
+    position: absolute;
+    top: -15px;
+    left: 173px;
+    border-radius: 50%;
+    background-color: rgb(171, 174, 165);
+}
+
+
+.figure__face {
     display: flex;
-    padding: 200px;
+    flex-direction: column;
     justify-content: center;
-}
-
-.smiley__body {
-    width: 300px;
+    width: 260px;
     height: 300px;
-    background-color: #aaa;
+    margin: auto;
+    background-color: rgb(252, 233, 131);
 }
 
-.smiley__eyeBox {
+.face__top {
+    flex-direction: row;
+    flex: 1 1 0;
+}
+
+.face__eyeBox {
     display: flex;
+    flex-direction: row;
+    flex: 1 1 0;
     justify-content: space-between;
-    padding: 20px;
+    padding: 0 20px 0 20px;
 }
 
-.smiley__eye {
+.face__eye {
     position: relative;
     width: 100px;
     height: 100px;
-    border: 5px solid #000;
+    background-color: rgb(246, 239, 231);
     border-radius: 50%;
 }
 
-.smiley__eyeBall {
+.eye__eyeball {
     position: absolute;
-    left: 35px;
+    left: 30px;
     top: 35px;
-    width: 30px;
-    height: 30px;
+    width: 40px;
+    height: 40px;
     border-radius: 50%;
-    background-color: #000;
+    background-color: rgb(99, 70, 64);
+}
+
+.eye__eyeball::before {
+    position: absolute;
+    width: 20px;
+    height: 20px;
+    left: 10px;
+    top: 10px;
+    border-radius: 50%;
+    content: "";
+    background-color: rgb(12, 24, 22);
+}
+
+
+.face__bottom {
+    display: flex;
+    height: 150px;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1 0 0;
+}
+
+.face__mouth {
+    display: flex;
+    flex-direction: column;
+    flex: 1 1 0;
+    transition: all .4s;
+    overflow: hidden;
+    justify-content: center;
+    border-radius: 20% 20% 80% 80% ;
+    background-color: rgb(139, 89, 86);
+}
+
+.face__mouth:hover {
+    display: block;
+    align-self: center;
+    transition: all .4s;
+    width: 50px;
+    flex: 50px 0 0;
+    border-radius: 50%;
+}
+
+.mouth__teeth {
+    display: flex;
+    flex: 1 0 0;
+    flex-direction: row;
+}
+
+.mouth__tooth {
+    flex: 1 1 0;
+    border-radius: 0 0 40% 40%;
+    align-self: stretch;
+    margin: 1px;
+    background-color: #fff;
+}
+
+.mouth__tongue {
+    display: flex;
+    position: relative;
+    flex-direction: column-reverse;
+    align-items: center;
+    flex: 3 0 0;
+}
+
+.mouth__tongue::before {
+    position: absolute;
+    left: 25px;
+    top:45px;
+    content: "";
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: rgb(200, 120, 100);
+}
+
+.mouth__tongue::after {
+    position: absolute;
+    left: 125px;
+    top:45px;
+    content: "";
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    background-color: rgb(200, 120, 100);
 }
