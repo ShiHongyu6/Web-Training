@@ -2,7 +2,7 @@ window.onload = function() {
 
     var eyeAction = function () {
         //运行过程大小会改变
-        var panel = document.querySelector("body");
+        var panel = document.querySelector(".panel--control");
         
         //运行过程大小不会变
         var leftEyeBall = document.querySelector("#leftEye>.eye__eyeball");
@@ -27,10 +27,14 @@ window.onload = function() {
             let eyeBallLeft = Math.floor(eyeWidth * relativeX);
             let eyeBallTop = Math.floor(eyeWidth * relativeY);
     
-            //防止眼球越界
-            eyeBallLeft = limitEyeball(eyeBallLeft)
-            eyeBallTop = limitEyeball(eyeBallTop);
-            //console.log(eyeBallLeft + ", " + eyeBallTop);
+            /**
+             * 调整眼球位置：
+             * 1. 使用定位时，上面计算的位置是眼球左上角的位置，要将这个位置调整到眼球中间
+             * 2. 防止眼球越界
+             */
+            eyeBallLeft = justifyPosition(eyeBallLeft)
+            eyeBallTop = justifyPosition(eyeBallTop);
+
             leftEyeBall.style.left = rightEyeBall.style.left = eyeBallLeft + "px";
             leftEyeBall.style.top = rightEyeBall.style.top = eyeBallTop + "px";
     
@@ -47,7 +51,8 @@ window.onload = function() {
         var eyeRadius = eyeWidth / 2;
         var MinOfEyeball =  Math.ceil(eyeRadius - eyeRadius / Math.sqrt(2));
         var MaxOfEyeball = Math.floor(eyeRadius + eyeRadius / Math.sqrt(2) - eyeballWidth);
-        function limitEyeball(position){
+        function justifyPosition(position){
+            position -= Math.floor(eyeballWidth / 2);
             position = Math.min(position, MaxOfEyeball);
             position = Math.max(position, MinOfEyeball);
             return position;
