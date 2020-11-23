@@ -4,6 +4,10 @@ window.onload = function() {
         //运行过程大小会改变
         var panel = document.querySelector(".panel--control");
         
+        //将'figure'放到panel中间
+        var figure = document.querySelector(".figure");
+        figure.style.top = 0.5 * panel.clientHeight - figure.clientHeight / 2 + "px";
+
         //运行过程大小不会变
         var leftEyeBall = document.querySelector("#leftEye>.eye__eyeball");
         var rightEyeBall = document.querySelector("#rightEye>.eye__eyeball"); 
