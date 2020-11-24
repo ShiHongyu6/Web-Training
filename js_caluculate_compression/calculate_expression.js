@@ -1,4 +1,69 @@
 /**
+ * 表示一个操作符
+ * @param {string} token 用来表示这个操作符的符号 
+ * @param {number} priority 用来表示符号的优先级
+ * @param {number} number_of_operand 表示操作符操作数的数量 
+ * @param {function} op_callback 该操作符进行的操作（回调） 
+ */
+function Operator(token, priority, number_of_operand, op_callback){
+    this.token = token;
+    this.priority = priority;
+    this.number_of_operand = number_of_operand;
+    this.op_callback = op_callback;
+}
+
+Operators = {
+    //加法
+    "ADD" : new Operator("+", 5, 2, function(){
+        return arguments[0] + arguments[1];
+    }),
+    //减法
+    "SUB" : new Operator("-", 5, 2, function(){
+        return arguments[0] - arguments[1];
+    }),
+    //乘法
+    "MULTI": new Operator("*", 7, 2, function(){
+        return arguments[0] * arguments[1];
+    }),
+    //除法
+    "DIV" : new Operator("/", 7, 2, function(){
+        return arguments[0] / arguments[1];
+    }),
+    //左括号
+    "L_PARENTHESIS" : new Operator("(", 0, 0, function(){
+
+    }),
+    //右括号
+    "R_PARENTHESIS" : new Operator(")", 0, 0, function(){
+
+    }),
+    //负号
+    "NEGATIVE" : new Operator("#", 10, 1, function(){
+        return -1 * arguments[0];
+    })
+};
+
+/**
+ * 根据符号，返回操作符对象
+ * @param {string}} token 
+ */
+Operators.getOperatorByToken = function(token){
+    switch(token){
+        case "+": return Operators.ADD;
+        case "-": return Operators.SUB;
+        case "*": return Operators.MULTI;
+        case "/": return Operators.DIV;
+        case "(": return Operators.L_PARENTHESIS;
+        case ")": return Operators.R_PARENTHESIS;
+        //为了和减号做区分，负号使用#代替，需要调整表达式
+        case "#": return Operators.NEGATIVE;
+        default: throw new Error("Unrecognized Token :\"" + token + "\" ! ");
+    }
+};
+
+
+
+/**
  * 计算一个数学表达式的值
  * 1. 首先转换为后缀表达式
  * 2. 计算后缀表达式
@@ -40,6 +105,7 @@ test_expressions = [
     "(2 + 3 * (4 + 5) * (6 + 7))",
     "5-(-(-3))",
     "5---3 * 6",
+    "3+8.3*1"
 ];
 
 
