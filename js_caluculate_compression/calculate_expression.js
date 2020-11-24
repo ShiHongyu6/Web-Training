@@ -1,3 +1,55 @@
+/**
+ * 计算一个数学表达式的值
+ * 1. 首先转换为后缀表达式
+ * 2. 计算后缀表达式
+ * @param {string}} expression 数学表达式 
+ */
+function calculate(expression){
+
+    //将中缀表达式转换为后缀表达式
+    expression = format_expression(expression);
+
+    //计算
+    let result_stack = [];
+    while(expression.length > 0){
+        //找到后缀表达式中的操作符
+        if(!isNaN(expression[0])){
+            //将表达式的操作数取出，压入栈
+            result_stack.push(expression.shift());
+        }else {
+            //取出操作符号
+            let op = expression.shift();
+            //根据操作符指定的操作数数量，从栈中取出操作数
+            let arg = [];
+            for(let i = 0; i < op.number_of_operand; ++i){
+                arg.unshift(result_stack.pop());
+            }
+            //将这一步的计算结果压入操作数栈
+            result_stack.push(op.op_callback.apply(op, arg));
+        }
+    }
+
+    //后缀表达式遍历完成，结果保存在栈中
+    return result_stack[0];
+}
+
+/*******测试开始************************** */
+
+test_expressions = [
+    "2-4*3/5+1",
+    "(2 + 3 * (4 + 5) * (6 + 7))",
+    "5-(-(-3))",
+    "5---3 * 6",
+];
+
+
+for(let i = 0; i < test_expressions.length; ++i){
+    console.log(calculate(test_expressions[i]));
+}
+
+
+/*******测试结束************************** */
+
 
 /**
  * 表示一个操作符
@@ -18,7 +70,6 @@ Operators = {
     "ADD" : new Operator("+", 5, 2, function(){
         return arguments[0] + arguments[1];
     }),
-
     //减法
     "SUB" : new Operator("-", 5, 2, function(){
         return arguments[0] - arguments[1];
@@ -40,7 +91,7 @@ Operators = {
 
     }),
     //负号
-    "NEGATIVE" : new Operator("-", 10, 1, function(){
+    "NEGATIVE" : new Operator("#", 10, 1, function(){
         return -1 * arguments[0];
     })
 };
@@ -101,55 +152,51 @@ function isMatch(expression){
 }
 
 
-// /**
-//  * 调整表达式：
-//  * 1. 将表达式中的“负号”，修改为#
-//  * 2. 
-//  * @param {*} expression 
-//  */
-// function format_expression(expression){
-
-// }
-
-
 /**
- * 计算一个数学表达式的值
- * @param {string}} expression 数学表达式 
+ * 调整表达式：
+ * 1. 将表达式中的“负号”，修改为#
+ * 2. 将中缀表达式转换为后缀表达式
+ * @param {string} expression 中缀表达式 
  */
-function calculate(expression){
+function format_expression(expression){
 
-    //计算之前，首先判断括号是否匹配
+    //判断括号是否匹配
     if(!isMatch(expression)){
         throw new Error("Expression Error : 括号不匹配");
     }
 
+    string_builder = ['('];
+    let last = " ";
+    for(let i = 0; i < expression.length; ++i){
+        //忽略空格
+        if(expression[i] === ' '){
+            continue;
+        }
 
-    //结尾加一个右括号当定界符，表示表达式结束
-    expression += Operators.R_PARENTHESIS.token;
-    /**
-     * 数字栈
-     */
-    let number_stack = [];
-    /**
-     * 操作符栈
-     */
-    let operator_stack = [Operators.L_PARENTHESIS];
+        string_builder.push(expression[i]);
+        if(expression[i] === '-' && !isDigit(last) && last !== ')'){
+            string_builder.pop();
+            string_builder.push('#');
+        }
+        last = expression[i];
+    }
+    //将整个表达式包含在一个括号中，方便后续转后缀表达式
+    string_builder.push(')');
+    //已将负号全部替换为'#'
+    expression = string_builder.join('');
 
-
+    let expression_stack = []; //接下来将这个表达式转换为后缀表达式，并将结果保存到这个栈中
+    let operator_stack = [];//转后缀表达式的过程中，需要一个符号栈来保存中间结果
     let number_builder = [];//用于把字符串转换为数字
     for(let i = 0; i < expression.length; ++i){
 
-        //忽略空格
-        if(expression[i] === ' ')
-            continue;
-        // console.log(expression[i]);
         if(isDigit(expression[i]) || expression[i] === "."){
             //遍历字符串，如果是数字字符，加入“构建器”
             number_builder.push(expression[i]);
         }else {
             //找到一个非数字字符，表示找到一个完整的操作数，将操作数入栈
             if(number_builder.length > 0){
-                number_stack.push(Number(number_builder.join('')));
+                expression_stack.push(Number(number_builder.join('')));
                 number_builder.length = 0;
             }
 
@@ -160,23 +207,16 @@ function calculate(expression){
             if(operator_current !== Operators.L_PARENTHESIS){
                 //得到当前操作符栈顶的操作符
                 let operator_top = operator_stack[operator_stack.length - 1];
-                //如果栈顶操作符优先级出现“上凸/极大”，则使用栈顶操作符计算
+                //如果操作符栈顶操作符优先级出现“上凸/极大”，将操作符栈的栈顶弹出，压入到后缀表达式栈
                 while(operator_stack.length > 0 && operator_current.priority <= operator_top.priority){
-                    //计算栈顶符号，出栈
+                    //对于单目运算符，结合方向向右，所以只有操作符栈顶的优先级更高的时候，才能将操作符栈顶加入后缀表达式
+                    if(operator_top.number_of_operand == 1 && operator_current.priority == operator_top.priority)
+                        break;
                     operator_stack.pop();
-                    if(operator_top.number_of_operand > 0){
-                        //根据操作符指定的操作数数量，从数字栈取出操作数
-                        let arguments = [];
-                        for(let i = 0; i < operator_top.number_of_operand; ++i){
-                            arguments.unshift(number_stack.pop());
-                        }
-                        // console.log("argument:" + arguments + "\top:" + operator_top.token + "\top_stack:" + operator_stack.map(e => {return e.token}) + "\tnum_stack:" + number_stack);
-                        //计算
-                        let mid_result = operator_top.op_callback.apply(operator_top.op_callback, arguments);
-                        //将结果压入数字栈
-                        number_stack.push(mid_result);
+                    //左括号不会进入后缀表达式
+                    if(operator_top !== Operators.L_PARENTHESIS){
+                        expression_stack.push(operator_top);
                     }
-                    
                     if(operator_top === Operators.L_PARENTHESIS && operator_current === Operators.R_PARENTHESIS)
                         break;
 
@@ -191,24 +231,6 @@ function calculate(expression){
             }
         }
     }
-    return number_stack[0];
+    return expression_stack;
 }
 
-test_expressions = [
-    "1+2+3",
-    "2-5+9",
-    "1-3-5",
-    "1.1+2.2+3.3",
-    "1+2*3",
-    "1+2*3+4",
-    "2 - 4 / 2 + 3",
-    "2-4*3/5+1",
-    "(2 + 3 * (4 + 5) * (6 + 7))",
-    "2 + #1",
-    "5-(#(#3))"
-];
-
-for(let i = 0; i < test_expressions.length; ++i){
-    console.log(calculate(test_expressions[i]));
-    // console.log(isMatch(test_expressions[i]));
-}
