@@ -80,7 +80,7 @@ const Operators = {
      * @param {Token Object}} token 
      */
     getOperatorByToken : function(token){
-        let returnVal = Operators[token];
+        const returnVal = Operators[token];
         if(returnVal)
             return returnVal;
         throw new Error("Unrecognized Token :\"" + token + "\" ! ");
@@ -248,7 +248,7 @@ function calculate(expression){
 
 /*******测试开始************************** */
 
-test_expressions = [
+var test_expressions = [
     "2-4*3/5+1",
     "(2 + 3 * (4 + 5) * (6 + 7))",
     "5-(-(-3))",
