@@ -248,7 +248,7 @@ function calculate(expression){
 
 /*******测试开始************************** */
 
-var test_expressions = [
+let test_expressions = [
     "2-4*3/5+1",
     "(2 + 3 * (4 + 5) * (6 + 7))",
     "5-(-(-3))",
