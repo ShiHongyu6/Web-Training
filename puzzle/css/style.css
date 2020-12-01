@@ -1,6 +1,12 @@
+@import url('https://css.gg/check-r.css');
+@import url('https://css.gg/close-r.css');
+@import url('https://css.gg/arrow-right-r.css');
+@import url('https://css.gg/add-r.css');
+
 html, body{
     margin: 0;
     width: 100%;
+    /* height: 100%; */
 }
 
 #bodyBackground{
@@ -19,15 +25,41 @@ html, body{
     margin: 0 auto;
     width: 100%;
     height: 100%;
+    margin-left: 3%;
 }
+
+.panel__chose_difficulty{
+    display: flex;
+    justify-content: flex-start;
+    align-self: flex-start;
+    width: 100%;
+}
+
+#difficulty__input{
+    margin-left: 1%;
+    color: rgb(59, 95, 221);
+}
+
+.panel__chose_difficulty .gg-arrow-right-r, .panel__chose_picture .gg-add-r{
+    color: rgb(59, 95, 221);
+}
+
+.panel__chose_difficulty .gg-check-r{
+    color: rgb(32, 178, 170);
+}
+
+.panel__chose_difficulty .gg-close-r{
+    color: #f12;
+}
+
 
 .puzzle__main{
     display: flex;
     min-width: 400px;
+    margin-top: 2%;
     width: 100%;
     flex-direction: row;
     flex-wrap: wrap;
-    margin-top: 100px;
     /* justify-content: center; */
     /* flex: 3 0 0; */
 }
@@ -38,7 +70,6 @@ html, body{
     grid-template-rows: 100px 100px 100px;
     grid-template-columns: 100px 100px 100px;    
     /* opacity : 0.2; */
-    margin: 0 0 0 5%;
 }
 
 .puzzle__segment--place{
@@ -48,7 +79,7 @@ html, body{
 }
 
 .panel__segment--drag{
-    margin: 0 0 0 5%;
+    margin: 0 0 0 2%;
     flex: 1 1 0;
 }
 
@@ -60,8 +91,45 @@ html, body{
     outline: 2px solid #fff;
 }
 
-.puzzle__chose{
+.panel__chose_picture{
+    margin-top: 2%;
     display: flex;
+    width: 100%;
     flex-direction: row;
-    /* flex: 1 0 0; */
+    flex: 1 1 0;
+}
+
+
+.add_picture__btn, .picture--candidate>img{
+    margin: 3px;
+    border-radius: 3px;
+    width: 50px;
+    height: 50px;
+}
+
+.picture--candidate>img{
+    display: block;
+}
+
+.add_picture__btn{
+    display: flex;
+    order: 1;
+    justify-content: center;
+    align-items: center;
+}
+
+.picture--candidate{
+    display: flex;
+}
+
+.add_picture__btn:hover{
+    background-color: #ddd;
+}
+
+.add_picture__btn:hover, .picture--candidate:hover{
+    cursor: pointer;
+}
+
+.picture__input{
+    display: none;
 }

@@ -9,8 +9,12 @@
 <body>
     <canvas id="bodyBackground"></canvas>
     <div class="puzzle">
-        <div class="panel__chose_difficlty">
-
+        <div class="panel__chose_difficulty">
+            <label for="difficulty__input">
+                <i class="gg-arrow-right-r"></i>
+            </label>
+            <input type="text" id="difficulty__input" title="请输入阶数" value="3"></input>
+            <button id="difficulty__btn">确定</button>
         </div>
 
         <div class="puzzle__main">
@@ -23,6 +27,14 @@
         </div>
 
         <div class="panel__chose_picture">
+            <div class="add_picture__btn">
+                <input type="file"class="picture__input" accept="image/*"/>
+                <i class="gg-add-r"></i>
+            </div>
+
+            <div class="picture--candidate">
+                
+            </div>
 
         </div>
     </div>

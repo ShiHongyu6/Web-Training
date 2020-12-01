@@ -1,22 +1,41 @@
-const Difficulty = {
-    Easy : 3,
-    Medium: 4,
-    Difficult: 5
-};
-
 const Puzzle_ZIndex = {
-    NoMoving: "0",
-    Moving: "17"
+    NoMoving: 0, //不移动的拼图碎片处于最下面
+    Moving: 10 //正在拖拽的拼图碎片处于最上面
 };
 
+const resourceURL = "resource";
+const resourceList = ["1.jpg", "2.jpg", "3.png", "4.jpg"];
+
+//输入成功/失败时对应的图标类名
+const SUCCESS_ICON_NAME = "gg-check-r";
+const FAULTY_ICON_NAME = "gg-close-r";
 
 
 window.onload = function(){
 
-    let currentDifficulty = Difficulty.Easy;
+    let currentDifficulty = 3;//默认值为3
     let currentImage = new Image();
     currentImage.src = "resource/2.jpg";
     const segmentMargin = 1;
+
+    //选择难度
+    const difficultyInput = document.querySelector("#difficulty__input");
+    const difficultyBtn = document.querySelector("#difficulty__btn");
+    const difficultyInputIcon = document.querySelector("i");
+    difficultyBtn.addEventListener("click", event=>{
+        const input = Number(difficultyInput.value);
+
+        if(!input || input < 0){
+            difficultyInputIcon.className = FAULTY_ICON_NAME;
+            difficultyInputIcon.title = "请不要输入负数及非数字字符";
+            return;
+        }
+
+
+        currentDifficulty = input;
+        difficultyInputIcon.className = SUCCESS_ICON_NAME;
+        refresh();
+    });
 
 
     //拼图区
@@ -66,8 +85,65 @@ window.onload = function(){
     //当更换图片时
     currentImage.addEventListener("load", function(){
         //修改body的背景
-        modifyBodyBackground(currentImage);
+        // modifyBodyBackground(currentImage);
         //图片加载完成，计算拼图区的大小
+        refresh();
+    });
+
+    //将resource目录下的图片加载到页面显示
+    const chosePicturePanel = document.querySelector(".picture--candidate");
+    const candidatePicture = document.createDocumentFragment();
+    resourceList.forEach(element => {
+        const imageElement = new Image();
+        imageElement.width = 50;
+        imageElement.height = 50;
+        imageElement.src = `${resourceURL}/${element}`;
+        candidatePicture.appendChild(imageElement);
+    });
+    chosePicturePanel.appendChild(candidatePicture);
+
+    chosePicturePanel.addEventListener("click", event => {
+        currentImage.src = event.target.src;
+    });
+
+
+    //添加候选的图片
+    const addPictureBtn = document.querySelector(".add_picture__btn");
+    const pictureInput = document.querySelector(".picture__input");
+    addPictureBtn.addEventListener("click", event=>{
+        
+        pictureInput.click();
+    });
+    pictureInput.addEventListener("change", function(event){
+        const file = this.files[0];
+        const url = window.URL.createObjectURL(file);
+        //通过canvas将图片保存在resource
+
+
+        window.URL.revokeObjectURL(url);
+        //将文件名保存在本地
+        // localStorage.setItem(file.name);
+        // for(let i = 0; i < localStorage.length; ++i){
+        //     console.log(localStorage.key(i));
+        // }
+        // localStorage.clear();
+    });
+
+
+
+    /**
+     * 刷新页面
+     * 当难度重新选择/重新选择图片时，刷新页面
+     */
+    function refresh(){
+
+        placeSegmentPanel.innerHTML = "";
+        const clonePlaceSegmentPanel = placeSegmentPanel;
+        const cloneDragSegmentPanel = dragSegmentPanel;
+        puzzlePanel.innerHTML = "";
+        puzzlePanel.appendChild(clonePlaceSegmentPanel);
+        puzzlePanel.appendChild(cloneDragSegmentPanel);
+
         gridWidth = Math.ceil(currentImage.width / currentDifficulty);
         gridHeight = Math.ceil(currentImage.height / currentDifficulty);
         
@@ -96,7 +172,7 @@ window.onload = function(){
             //在拖拽区添加混乱的碎片（div元素）
             newElement = document.createElement("div");
             //初始化拼图碎片
-            initSegment(newElement, gridWidth, gridHeight, segmentMargin, currentImage.src, i);
+            initSegment(newElement, currentDifficulty, gridWidth, gridHeight, segmentMargin, currentImage.src, i);
             //在拖拽区随机摆放
             placeElementRandomly(newElement, dragSegmentPanel.offsetLeft, dragSegmentPanel.offsetLeft + dragSegmentPanel.clientWidth - gridWidth, dragSegmentPanel.offsetTop, dragSegmentPanel.offsetTop + dragSegmentPanel.clientHeight - gridHeight);
 
@@ -105,8 +181,8 @@ window.onload = function(){
 
         placeSegmentPanel.appendChild(placeSegmentPanelFragment);
         puzzlePanel.append(puzzlePanelFragment);
-    });
-
+    }
+};
 
 /**
  * 更换背景图片
@@ -129,7 +205,7 @@ function modifyBackgroundByCSS(element, url, left, top){
  * @param {url:string} backgroundImage 背景图片url
  * @param {number} segmentId 拼图ID 根据这个id 算出被禁图片的便宜
  */
-function initSegment(segment, containerWidth, containerHeight,segmentMargin,backgroundImageUrl, segmentId){
+function initSegment(segment, difficulty,containerWidth, containerHeight,segmentMargin,backgroundImageUrl, segmentId){
     //首先计算拼图碎片的大小，grid布局的每格容器的宽和高各减去2 * margin
     const segmentWidth = containerWidth - 2 * segmentMargin;
     const segmentHeight = containerHeight - 2 * segmentMargin;
@@ -138,10 +214,9 @@ function initSegment(segment, containerWidth, containerHeight,segmentMargin,back
     segment.style.width = segmentWidth + "px";
     segment.style.height = segmentHeight + "px";
     //给碎片添加背景
-    modifyBackgroundByCSS(segment, backgroundImageUrl, -(Math.floor(segmentId%currentDifficulty) * containerWidth + segmentMargin), -(Math.floor(segmentId/currentDifficulty) * containerHeight + segmentMargin));
+    modifyBackgroundByCSS(segment, backgroundImageUrl, -(Math.floor(segmentId%difficulty) * containerWidth + segmentMargin), -(Math.floor(segmentId/difficulty) * containerHeight + segmentMargin));
     segment.segmentId = segmentId;//拼图碎片的ID
 }
-};
 
 
 /**
