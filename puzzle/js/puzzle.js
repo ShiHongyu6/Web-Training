@@ -15,6 +15,11 @@ const FAULTY_ICON_NAME = "gg-close-r";
 //图片宽度 高度按比例放缩
 let PICTURE_WIDTH;
 
+let relativeXOnclick = 0;
+let relativeYOnclick = 0;
+
+
+
 
 window.onload = function(){
 
@@ -27,17 +32,15 @@ window.onload = function(){
     //选择难度
     const difficultyInput = document.querySelector("#difficulty__input");
     const difficultyBtn = document.querySelector("#difficulty__btn");
-    const difficultyInputIcon = document.querySelector("i");
+    const difficultyInputIcon = document.querySelector(".panel__chose_difficulty i");
     difficultyBtn.addEventListener("click", ()=>{
         const input = Number(difficultyInput.value);
-
         if(!input || input < 0){
             difficultyInputIcon.className = FAULTY_ICON_NAME;
             difficultyInputIcon.title = "请不要输入负数及非数字字符";
+            console.log(input);
             return;
         }
-
-
         currentDifficulty = input;
         difficultyInputIcon.className = SUCCESS_ICON_NAME;
         refresh();
@@ -67,8 +70,8 @@ window.onload = function(){
         //这块拼图碎片的z-index最高
         currentDraggingSegment.style.zIndex = Puzzle_ZIndex.Moving;
         //记录鼠标在拼图上的相对位置
-        currentDraggingSegment.relativeXOnclick = event.offsetX;
-        currentDraggingSegment.relativeYOnclick = event.offsetY;
+        relativeXOnclick = event.offsetX;
+        relativeYOnclick = event.offsetY;
         this.addEventListener("mousemove", dragMove);
     }, true);
 
@@ -76,13 +79,12 @@ window.onload = function(){
     const puzzleList = [];
 
         //绑定拖拽关闭事件
-    draggablePanel.addEventListener("mouseup", event => {
-        if(!event.target.isSegment)
-            return ;
+    draggablePanel.addEventListener("mouseup", function(event) {
+
         this.removeEventListener("mousemove", dragMove);
         event.target.style.zIndex = Puzzle_ZIndex.Finish;
-        delete event.target.relativeXOnclick;
-        delete event.target.relativeYOnclick;
+        relativeXOnclick = 0;
+        relativeYOnclick = 0;
 
         //计算当前鼠标所指向的拼图区所在的块 判断是否位置正确
         const rowId = Math.floor((event.clientY - placeSegmentPanel.offsetTop) / gridHeight);
@@ -180,6 +182,7 @@ window.onload = function(){
         puzzlePanel.appendChild(clonePlaceSegmentPanel);
         puzzlePanel.appendChild(cloneDragSegmentPanel);
         
+        puzzleList.length = 0;
         document.querySelector(".puzzle--finish").style.display = "none";
 
         gridWidth = Math.floor(currentImage.width / currentDifficulty);
@@ -221,7 +224,7 @@ window.onload = function(){
      * @param {Event} event 
      */
     function dragMove(event){
-        elementMove(currentDraggingSegment, event.clientX - event.target.relativeXOnclick, event.clientY - event.target.relativeYOnclick);
+        elementMove(currentDraggingSegment, event.clientX - relativeXOnclick, event.clientY - relativeYOnclick);
     }
 
     function initSegment(segment, segmentId){
