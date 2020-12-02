@@ -11,14 +11,12 @@ const objectURLOfResource = [];//图片对应的objectURL
 const SUCCESS_ICON_NAME = "gg-check-r";
 const FAULTY_ICON_NAME = "gg-close-r";
 
-//图片宽度*高度
+//图片宽度 高度按比例放缩
 let PICTURE_WIDTH;
-let PICTURE_HEIGHT;
 
 window.onload = function(){
 
     PICTURE_WIDTH  = Math.floor(document.body.scrollWidth  * 0.6);
-    PICTURE_HEIGHT = Math.floor(document.body.scrollHeight * 0.65);
 
     let currentDifficulty = 3;//默认值为3
     let currentImage = new Image();
@@ -104,7 +102,7 @@ window.onload = function(){
         imageElement.src = `${resourceURL}/${element}`;
 
         imageElement.addEventListener("load", function() {
-            const dataUrl = modifyImageDimensions(this, PICTURE_WIDTH, PICTURE_HEIGHT);
+            const dataUrl = modifyImageDimensions(this, PICTURE_WIDTH);
             objectURLOfResource.push(dataUrl);
 
             const imgCandidate = new Image();
@@ -143,7 +141,7 @@ window.onload = function(){
         imgElement.src = window.URL.createObjectURL(file);
         imgElement.addEventListener("load", function(){
             const img = new Image();
-            img.src = modifyImageDimensions(this, PICTURE_WIDTH, PICTURE_HEIGHT);
+            img.src = modifyImageDimensions(this, PICTURE_WIDTH);
             chosePicturePanel.appendChild(img);
             currentImage.src = img.src;
         });
@@ -291,11 +289,11 @@ function modifyBodyBackground(img){
 }
 
 
-function modifyImageDimensions(imgElement, dw, dh){
+function modifyImageDimensions(imgElement, dw){
     const canvas = document.createElement("canvas");
 
     const scalePercent = dw / imgElement.width;
-    dh = Math.floor(scalePercent * imgElement.height);
+    const dh = Math.floor(scalePercent * imgElement.height);
 
     canvas.setAttribute("width", dw+ "px");
     canvas.setAttribute("height",dh + "px" );
