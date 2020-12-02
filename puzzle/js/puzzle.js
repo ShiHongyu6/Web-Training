@@ -4,25 +4,31 @@ const Puzzle_ZIndex = {
 };
 
 const resourceURL = "resource";
-const resourceList = ["1.jpg", "2.jpg", "3.png", "4.jpg"];
+const resourceList = ["1.jpg", "2.jpg", "3.png"];
+const objectURLOfResource = [];//图片对应的objectURL
 
 //输入成功/失败时对应的图标类名
 const SUCCESS_ICON_NAME = "gg-check-r";
 const FAULTY_ICON_NAME = "gg-close-r";
 
+//图片宽度*高度
+let PICTURE_WIDTH;
+let PICTURE_HEIGHT;
 
 window.onload = function(){
 
+    PICTURE_WIDTH  = Math.floor(document.body.scrollWidth  * 0.6);
+    PICTURE_HEIGHT = Math.floor(document.body.scrollHeight * 0.65);
+
     let currentDifficulty = 3;//默认值为3
     let currentImage = new Image();
-    currentImage.src = "resource/2.jpg";
     const segmentMargin = 1;
 
     //选择难度
     const difficultyInput = document.querySelector("#difficulty__input");
     const difficultyBtn = document.querySelector("#difficulty__btn");
     const difficultyInputIcon = document.querySelector("i");
-    difficultyBtn.addEventListener("click", event=>{
+    difficultyBtn.addEventListener("click", ()=>{
         const input = Number(difficultyInput.value);
 
         if(!input || input < 0){
@@ -90,20 +96,36 @@ window.onload = function(){
         refresh();
     });
 
-    //将resource目录下的图片加载到页面显示
+    //修改resource目录下图片的大小  返回dataURL保存到objectURLResource数组中
     const chosePicturePanel = document.querySelector(".picture--candidate");
     const candidatePicture = document.createDocumentFragment();
     resourceList.forEach(element => {
         const imageElement = new Image();
-        imageElement.width = 50;
-        imageElement.height = 50;
         imageElement.src = `${resourceURL}/${element}`;
-        candidatePicture.appendChild(imageElement);
+
+        imageElement.addEventListener("load", function() {
+            const dataUrl = modifyImageDimensions(this, PICTURE_WIDTH, PICTURE_HEIGHT);
+            objectURLOfResource.push(dataUrl);
+
+            const imgCandidate = new Image();
+            imgCandidate.src = dataUrl;
+            candidatePicture.appendChild(imgCandidate);
+
+            console.log(this.src);
+            //这次加载成功的是最后一张图片  将DocumentFragment加入到文档树中渲染
+            if(resourceList.length === objectURLOfResource.length){
+                chosePicturePanel.appendChild(candidatePicture);
+
+                //同时 给currentImage赋值
+                currentImage.src = objectURLOfResource[0];
+            }
+        });
     });
-    chosePicturePanel.appendChild(candidatePicture);
+
 
     chosePicturePanel.addEventListener("click", event => {
         currentImage.src = event.target.src;
+        console.log(currentImage.src);
     });
 
 
@@ -116,17 +138,16 @@ window.onload = function(){
     });
     pictureInput.addEventListener("change", function(event){
         const file = this.files[0];
-        const url = window.URL.createObjectURL(file);
-        //通过canvas将图片保存在resource
+        console.log(file);
+        const imgElement = new Image();
+        imgElement.src = window.URL.createObjectURL(file);
+        imgElement.addEventListener("load", function(){
+            const img = new Image();
+            img.src = modifyImageDimensions(this, PICTURE_WIDTH, PICTURE_HEIGHT);
+            chosePicturePanel.appendChild(img);
+            currentImage.src = img.src;
+        });
 
-
-        window.URL.revokeObjectURL(url);
-        //将文件名保存在本地
-        // localStorage.setItem(file.name);
-        // for(let i = 0; i < localStorage.length; ++i){
-        //     console.log(localStorage.key(i));
-        // }
-        // localStorage.clear();
     });
 
 
@@ -267,5 +288,18 @@ function modifyBodyBackground(img){
     canvas.setAttribute("height",document.body.scrollHeight + "px" );
     let ctx = canvas.getContext("2d");
     ctx.drawImage(img, 0, 0, img.width, img.height, 0, 0,canvas.width, canvas.height);
-    console.log(canvas.width);
+}
+
+
+function modifyImageDimensions(imgElement, dw, dh){
+    const canvas = document.createElement("canvas");
+
+    const scalePercent = dw / imgElement.width;
+    dh = Math.floor(scalePercent * imgElement.height);
+
+    canvas.setAttribute("width", dw+ "px");
+    canvas.setAttribute("height",dh + "px" );
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(imgElement, 0, 0, imgElement.width, imgElement.height, 0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL('image/png');
 }
