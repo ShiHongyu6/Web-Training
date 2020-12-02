@@ -95,3 +95,10 @@ new King()//Henry
 普通函数的this，取决于何时调用，this指向调用时的上下文；   
 
 箭头函数的this，取决于何时定义，this指向定义时的上下文。
+
+
+## canvas
+
+void ctx.drawImage(image, dx, dy);
+void ctx.drawImage(image, dx, dy, dWidth, dHeight);
+void ctx.drawImage(image, sx, sy, sWidth, sHeight, dx, dy, dWidth, dHeight);

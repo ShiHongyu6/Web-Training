@@ -18,6 +18,20 @@ html, body{
     height: 100%;
 }
 
+.puzzle--finish{
+    z-index: 100;
+    width: 20%;
+    height: 20%;
+    color: rgb(32, 178, 170);
+    position: absolute;
+    display: none;
+}
+
+.puzzle--finish>.gg-check-r{
+    display: inline-block;
+}
+
+
 .puzzle{
     display: flex;
     flex-direction: column;
@@ -67,14 +81,13 @@ html, body{
 
 
 .panel__segment--place{
-    display: grid;
-    grid-template-rows: 100px 100px 100px;
-    grid-template-columns: 100px 100px 100px;    
+    display: block;
 }
 
 .puzzle__segment--place{
     background-color: #fff;
-    margin: 1px;
+    float: left;
+    margin: 1px 0 0 1px;
     opacity : 0.8;
 }
 

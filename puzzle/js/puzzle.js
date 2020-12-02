@@ -1,5 +1,6 @@
 const Puzzle_ZIndex = {
-    NoMoving: 0, //不移动的拼图碎片处于最下面
+    Finish: 0,
+    NoMoving: 1, 
     Moving: 10 //正在拖拽的拼图碎片处于最上面
 };
 
@@ -13,6 +14,7 @@ const FAULTY_ICON_NAME = "gg-close-r";
 
 //图片宽度 高度按比例放缩
 let PICTURE_WIDTH;
+
 
 window.onload = function(){
 
@@ -46,32 +48,39 @@ window.onload = function(){
     const puzzlePanel = document.querySelector(".puzzle__main");
     //放置区
     const placeSegmentPanel = document.querySelector(".panel__segment--place");
-    //放置区使用gird布局 这两个属性给出每个格子的大小
     let gridWidth;
     let gridHeight;
-    
+
+
+
     //打乱后的拼图所在的区域
     const dragSegmentPanel = document.querySelector(".panel__segment--drag");
     //可拖拽区域
-    const draggablePanel = document.querySelector(".puzzle");
+    const draggablePanel = document.body;
         //绑定拖拽开启事件
-    draggablePanel.addEventListener("mousedown", event => {
-        if(!event.target.isSegment)
+    let currentDraggingSegment = null;
+    draggablePanel.addEventListener("mousedown", function(event) {
+        if(!event.target.isSegment){
             return ;
+        }
+        currentDraggingSegment = event.target;
         //这块拼图碎片的z-index最高
-        event.target.style.zIndex = Puzzle_ZIndex.Moving;
-
-        //计算鼠标按下时相对于当前元素的位置
-        event.target.relativeXOnclick = event.offsetX;
-        event.target.relativeYOnclick = event.offsetY;
+        currentDraggingSegment.style.zIndex = Puzzle_ZIndex.Moving;
+        //记录鼠标在拼图上的相对位置
+        currentDraggingSegment.relativeXOnclick = event.offsetX;
+        currentDraggingSegment.relativeYOnclick = event.offsetY;
         this.addEventListener("mousemove", dragMove);
-    });
+    }, true);
+
+    //拼图碎片组成的数组 查看是否完成拼图
+    const puzzleList = [];
+
         //绑定拖拽关闭事件
     draggablePanel.addEventListener("mouseup", event => {
         if(!event.target.isSegment)
             return ;
         this.removeEventListener("mousemove", dragMove);
-        event.target.style.zIndex = Puzzle_ZIndex.NoMoving;
+        event.target.style.zIndex = Puzzle_ZIndex.Finish;
         delete event.target.relativeXOnclick;
         delete event.target.relativeYOnclick;
 
@@ -79,12 +88,23 @@ window.onload = function(){
         const rowId = Math.floor((event.clientY - placeSegmentPanel.offsetTop) / gridHeight);
         const colId = Math.floor((event.clientX - placeSegmentPanel.offsetLeft) / gridWidth);
         //算出鼠标当前指向的grid 通过比较拼图随便的id与这个gird格子 就可以知道是否匹配
-        console.log(rowId * currentDifficulty + colId);
         if(rowId * currentDifficulty + colId === event.target.segmentId){
             //如果匹配，将拼图移动到正确位置（吸附）
             elementMove(event.target, colId * gridWidth + placeSegmentPanel.offsetLeft + segmentMargin, rowId * gridHeight + placeSegmentPanel.offsetTop + segmentMargin);
+            event.target.zIndex = Puzzle_ZIndex.Finish;
+            //判断是否完成拼图
+            let i;
+            for(i = 0; i < currentDifficulty * currentDifficulty; ++i){
+                if(puzzleList[i].correctLeft != parseInt(puzzleList[i].style.left)
+                    || puzzleList[i].correctTop != parseInt(puzzleList[i].style.top)){
+                    break;
+                }
+            }
+            if(i == currentDifficulty * currentDifficulty){
+                document.querySelector(".puzzle--finish").style.display = "block";
+            }
         }
-    });
+    }, true);
 
     //当更换图片时
     currentImage.addEventListener("load", function(){
@@ -109,7 +129,6 @@ window.onload = function(){
             imgCandidate.src = dataUrl;
             candidatePicture.appendChild(imgCandidate);
 
-            console.log(this.src);
             //这次加载成功的是最后一张图片  将DocumentFragment加入到文档树中渲染
             if(resourceList.length === objectURLOfResource.length){
                 chosePicturePanel.appendChild(candidatePicture);
@@ -123,20 +142,18 @@ window.onload = function(){
 
     chosePicturePanel.addEventListener("click", event => {
         currentImage.src = event.target.src;
-        console.log(currentImage.src);
     });
 
 
     //添加候选的图片
     const addPictureBtn = document.querySelector(".add_picture__btn");
     const pictureInput = document.querySelector(".picture__input");
-    addPictureBtn.addEventListener("click", event=>{
+    addPictureBtn.addEventListener("click", ()=>{
         
         pictureInput.click();
     });
-    pictureInput.addEventListener("change", function(event){
+    pictureInput.addEventListener("change", function(){
         const file = this.files[0];
-        console.log(file);
         const imgElement = new Image();
         imgElement.src = window.URL.createObjectURL(file);
         imgElement.addEventListener("load", function(){
@@ -162,20 +179,14 @@ window.onload = function(){
         puzzlePanel.innerHTML = "";
         puzzlePanel.appendChild(clonePlaceSegmentPanel);
         puzzlePanel.appendChild(cloneDragSegmentPanel);
-
-        gridWidth = Math.ceil(currentImage.width / currentDifficulty);
-        gridHeight = Math.ceil(currentImage.height / currentDifficulty);
         
-        //grid布局的行列属性
-        const gridTemplateRows = [];
-        const gridTemplateCols = [];
-        for(let i = 0; i < currentDifficulty; ++i){
-            gridTemplateRows.push(gridHeight);
-            gridTemplateCols.push(gridWidth);
-        }
-        //修改放置区的大小
-        placeSegmentPanel.style.gridTemplateRows = gridTemplateRows.join("px ") + "px";
-        placeSegmentPanel.style.gridTemplateColumns = gridTemplateCols.join("px ") + "px";
+        document.querySelector(".puzzle--finish").style.display = "none";
+
+        gridWidth = Math.floor(currentImage.width / currentDifficulty);
+        gridHeight = Math.floor(currentImage.height / currentDifficulty);
+        
+        placeSegmentPanel.style.width  = `${gridWidth * currentDifficulty + segmentMargin}px`;
+        placeSegmentPanel.style.height = `${gridHeight * currentDifficulty + segmentMargin}px`;
         //更改放置区的背景
         modifyBackgroundByCSS(placeSegmentPanel, currentImage.src, 0, 0);
                 
@@ -186,21 +197,53 @@ window.onload = function(){
              //在拼图区添加div元素(用来遮挡背景图片)
             let newElement = document.createElement("div");
             newElement.className = "puzzle__segment--place";
+            newElement.style.width  = `${gridWidth - segmentMargin}px`
+            newElement.style.height = `${gridHeight - segmentMargin}px`
             placeSegmentPanelFragment.appendChild(newElement);
 
             //在拖拽区添加混乱的碎片（div元素）
             newElement = document.createElement("div");
             //初始化拼图碎片
-            initSegment(newElement, currentDifficulty, gridWidth, gridHeight, segmentMargin, currentImage.src, i);
+            initSegment(newElement, i);
             //在拖拽区随机摆放
             placeElementRandomly(newElement, dragSegmentPanel.offsetLeft, dragSegmentPanel.offsetLeft + dragSegmentPanel.clientWidth - gridWidth, dragSegmentPanel.offsetTop, dragSegmentPanel.offsetTop + dragSegmentPanel.clientHeight - gridHeight);
-
+            puzzleList.push(newElement);
             puzzlePanelFragment.appendChild(newElement);
         }
 
         placeSegmentPanel.appendChild(placeSegmentPanelFragment);
         puzzlePanel.append(puzzlePanelFragment);
     }
+
+    
+    /**
+     * 拖拽过程中 元素移动
+     * @param {Event} event 
+     */
+    function dragMove(event){
+        elementMove(currentDraggingSegment, event.clientX - event.target.relativeXOnclick, event.clientY - event.target.relativeYOnclick);
+    }
+
+    function initSegment(segment, segmentId){
+        //首先计算拼图碎片的大小，"每格容器"的宽和高各减去2 * margin
+        const segmentWidth = gridWidth - segmentMargin;
+        const segmentHeight = gridHeight - segmentMargin;
+        segment.isSegment = true;
+        segment.className = "puzzle__segment--drag";
+        segment.style.width = segmentWidth + "px";
+        segment.style.height = segmentHeight + "px";
+        segment.style.zIndex = Puzzle_ZIndex.NoMoving;
+        //给碎片添加背景
+        const left = Math.floor(segmentId%currentDifficulty) * gridWidth + segmentMargin;
+        const top  = Math.floor(segmentId/currentDifficulty) * gridHeight + segmentMargin;
+        modifyBackgroundByCSS(segment, currentImage.src, -left, -top);
+        segment.segmentId = segmentId;//拼图碎片的ID
+
+        //这片碎片正确的位置
+        segment.correctLeft = left + placeSegmentPanel.offsetLeft;
+        segment.correctTop  = top + placeSegmentPanel.offsetTop;
+    }
+    
 };
 
 /**
@@ -211,39 +254,8 @@ window.onload = function(){
  * @param {number} top 
  */
 function modifyBackgroundByCSS(element, url, left, top){
-    element.style.backgroundImage = "url(" + url + ")";
-    element.style.backgroundPosition = left + "px " + top + "px";
-}
-
-/**
- * 初始化一个拼图碎片
- * @param {HTMLElement} segment 拼图碎片 
- * @param {number} containerWidth 容器宽度
- * @param {number} containerHeight 容器高度
- * @param {number} segmentMargin 拼图碎片在容器中的外边框
- * @param {url:string} backgroundImage 背景图片url
- * @param {number} segmentId 拼图ID 根据这个id 算出被禁图片的便宜
- */
-function initSegment(segment, difficulty,containerWidth, containerHeight,segmentMargin,backgroundImageUrl, segmentId){
-    //首先计算拼图碎片的大小，grid布局的每格容器的宽和高各减去2 * margin
-    const segmentWidth = containerWidth - 2 * segmentMargin;
-    const segmentHeight = containerHeight - 2 * segmentMargin;
-    segment.isSegment = true;
-    segment.className = "puzzle__segment--drag";
-    segment.style.width = segmentWidth + "px";
-    segment.style.height = segmentHeight + "px";
-    //给碎片添加背景
-    modifyBackgroundByCSS(segment, backgroundImageUrl, -(Math.floor(segmentId%difficulty) * containerWidth + segmentMargin), -(Math.floor(segmentId/difficulty) * containerHeight + segmentMargin));
-    segment.segmentId = segmentId;//拼图碎片的ID
-}
-
-
-/**
- * 拖拽过程中 元素移动
- * @param {Event} event 
- */
-function dragMove(event){
-    elementMove(event.target, event.clientX - event.target.relativeXOnclick, event.clientY - event.target.relativeYOnclick);
+    element.style.backgroundImage = `url(${url})`;
+    element.style.backgroundPosition = `${left}px ${top}px`;
 }
 
 /**
