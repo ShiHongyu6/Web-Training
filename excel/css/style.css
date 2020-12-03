@@ -1,0 +1,73 @@
+.excel__top-container, .excel__row-id-container{
+    display: flex;
+    background-color: rgb(230, 230, 230);
+}
+
+.excel__icon--all-select{
+    display: block;
+    position: relative;
+    width: 30px;
+    height: 26px;
+    border: 1px solid rgb(153, 153, 153);
+    border-top-style: none;
+    border-left-style: none;
+}
+
+.excel__icon--all-select::before, .excel__icon--all-select::after{
+    content: "";
+    display: block;
+    position: absolute;
+}
+
+.excel__icon--all-select::before{
+    background-color: rgb(180, 180, 180);
+    width: 12px;
+    height: 12px;
+    top: 11px;
+    left: 15px;
+}
+
+.excel__icon--all-select::after{
+    width: 12px;
+    height: 18px;
+    top: 4px;
+    left: 12px;
+    background-color: rgb(230, 230, 230);
+    transform: rotate(45deg);
+}
+
+.excel__col-id-container{
+    display: flex;
+    flex-basis: 0;
+}
+
+.excel__col-id{
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
+    width: 73px;
+    border: 1px solid rgb(153, 153, 153);
+    border-top-style: none;
+    border-left-style: none;
+}
+
+.excel__col-id:last-child{
+    border-right-style: solid;
+}
+
+.excel__row-id-container{
+    flex-direction: column;
+
+}
+
+.excel__row-id{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 18px;
+    width: 30px;
+    border: 1px solid rgb(153, 153, 153);
+    border-top-style: none;
+    border-left-style: none;
+}
+
