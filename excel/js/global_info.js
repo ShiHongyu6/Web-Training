@@ -1,5 +1,5 @@
 const INIT_INFO = {
-    COL_NUMBER    : 20,
+    COL_NUMBER    : 26,
     ROW_NUMBER    : 100,
     COL_ID_HEIGHT : 26,
     ROW_ID_WIDTH  : 30,
@@ -9,10 +9,16 @@ const INIT_INFO = {
 };
 
 
+const CELLS = {
+    //保存每一列的列id节点
+    colIdList : new Array(),
+    //保存每一行的行id节点
+    rowIdList : new Array(),
+};
+
 
 //每次只能编辑一个cell
 let editableCell = null;
-
 
 
 
@@ -33,11 +39,13 @@ function isEditableCell(cell){
 function switchEditableCell(cell){
     if(editableCell){
         editableCell.contentEditable = "false";
+        editableCell.classList.remove("editable");
         editableCell = null;
     }
     if(cell){
         cell.contentEditable = "true";
         editableCell = cell;
+        editableCell.classList.add("editable");
     }
 }
 
@@ -58,5 +66,23 @@ function switchSelectedCellByClick(cell){
     if(cell){
         cell.classList.add("selectedByClick");
         selectedCellByClick = cell;
+    }
+}
+
+/**
+ * 修改拖拽起点的样式
+ */
+function switchSelectedCellByClickOnDrag(){
+    switchSelectedCellByClick();
+    selectedCellByClick.classList.add("selectedByClickOnDrag");
+}
+
+
+//拖拽选择时的遮盖
+let coverElement = null;
+
+function takeOffCoverElement(){
+    if(coverElement){
+        coverElement.style.display = "none";
     }
 }
