@@ -1,4 +1,10 @@
-.excel__top-container, .excel__row-id-container{
+*{
+    margin: 0;
+    border: 0;
+    padding: 0;
+}
+
+.excel__top-container, .excel__row-id-container {
     display: flex;
     background-color: rgb(230, 230, 230);
 }
@@ -6,20 +12,15 @@
 .excel__icon--all-select{
     display: block;
     position: relative;
-    width: 30px;
-    height: 26px;
-    border: 1px solid rgb(153, 153, 153);
-    border-top-style: none;
-    border-left-style: none;
 }
 
-.excel__icon--all-select::before, .excel__icon--all-select::after{
+.excel__icon--all-select::before, .excel__icon--all-select::after {
     content: "";
     display: block;
     position: absolute;
 }
 
-.excel__icon--all-select::before{
+.excel__icon--all-select::before {
     background-color: rgb(180, 180, 180);
     width: 12px;
     height: 12px;
@@ -27,7 +28,7 @@
     left: 15px;
 }
 
-.excel__icon--all-select::after{
+.excel__icon--all-select::after {
     width: 12px;
     height: 18px;
     top: 4px;
@@ -36,38 +37,51 @@
     transform: rotate(45deg);
 }
 
-.excel__col-id-container{
+.excel__col-id-container {
     display: flex;
     flex-basis: 0;
 }
 
-.excel__col-id{
+.excel__col-id-container > div {
     display: flex;
     justify-content: center;
     align-items: flex-end;
-    width: 73px;
-    border: 1px solid rgb(153, 153, 153);
-    border-top-style: none;
-    border-left-style: none;
 }
 
-.excel__col-id:last-child{
+.excel__col-id:last-child {
     border-right-style: solid;
+}
+
+.excel__main-container{
+    display: flex;
 }
 
 .excel__row-id-container{
     flex-direction: column;
-
 }
 
-.excel__row-id{
+.excel__row-id-container > div {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 18px;
-    width: 30px;
-    border: 1px solid rgb(153, 153, 153);
-    border-top-style: none;
-    border-left-style: none;
 }
 
+.excel__icon--all-select, .excel__col-id-container > div, .excel__row-id-container > div , .excel__cells-container > div{
+    border-style: solid;
+    border-top-style: none;
+    border-left-style: none;
+    outline: none;
+    border-color: rgb(153, 153, 153);
+}
+
+
+.excel__cells-container > div{
+    float: left;
+    white-space:nowrap; /* 让cell中的内容不含行  横向溢出 */
+    overflow: hidden; /* text-overflow依赖这个属性; */
+    text-overflow: ellipsis;/* 溢出部分省略后 用...代替 */
+}
+
+.excel .selectedByClick{
+    outline: 2px solid rgb(32, 178, 170);
+}
