@@ -81,6 +81,97 @@ function dragSelect(event){
 }
 
 
+function setColsIdAction(){
+    const colIdContainer = document.querySelector(".excel__col-id-container");
+    /**
+     * 当鼠标移动到列Id的边缘时  改变鼠标指针及背景颜色  
+     */
+    colIdContainer.addEventListener("mousemove", setColsCursorAndBackground);
+
+    /**
+     * 处理拖拽改变大小  选择一整列
+     */
+    colIdContainer.addEventListener("mousedown", colIdMouseDownHandler);
+}
+
+
+/**
+ * 修改鼠标指针和背景颜色
+ */
+const colBackgroundColorStyle = document.createElement("style");
+colBackgroundColorStyle.innerHTML = 
+`.excel__col-id-container > div:hover{
+    background-color: #76cebb;
+};
+`;
+//是否已经加载
+colBackgroundColorStyle.isEffective = false;
+function setColsCursorAndBackground(event){
+    if(event.offsetX < event.target.clientWidth * INIT_INFO.MODIFY_CURSOR_BOUNDARY_PERCENT 
+        || event.offsetX > event.target.clientWidth * (1 - INIT_INFO.MODIFY_CURSOR_BOUNDARY_PERCENT)){
+        event.target.style.cursor = "col-resize";
+        if(colBackgroundColorStyle.isEffective){
+            document.head.removeChild(colBackgroundColorStyle);
+            colBackgroundColorStyle.isEffective = false;
+        }
+    } else {
+        event.target.style.cursor = "default";
+        if(!colBackgroundColorStyle.isEffective){
+            document.head.appendChild(colBackgroundColorStyle);
+            colBackgroundColorStyle.isEffective = true;
+        }
+    }
+}
+
+/**
+ * 列Id上的行为有两个
+ *  1. 点击列Id靠中间的位置时 选择整列
+ *  2. 拖拽列Id边缘时  修改整列的大小
+ */
+let modifyingColId = null;
+function colIdMouseDownHandler(event){
+    if(event.offsetX < event.target.clientWidth * INIT_INFO.MODIFY_CURSOR_BOUNDARY_PERCENT ) {
+        //在列Id靠前面的范围里   修改前一列的宽度
+        const preColId = event.target.colId - 1;
+        if(preColId > -1){
+            modifyingColId = CELLS.colIdList[preColId];
+        }
+    } else if(event.offsetX > event.target.clientWidth * (1 - INIT_INFO.MODIFY_CURSOR_BOUNDARY_PERCENT)) {
+        //在列Id靠后面的范围  修改当前列的宽度
+        modifyingColId = CELLS.colIdList[event.target.colId];
+    } else{
+        //选中当前列
+
+        return ;
+    }
+
+    Excel.addEventListener("mousemove", resizeColByDarg);
+    Excel.addEventListener("mouseup", function() {
+        this.removeEventListener("mousemove", resizeColByDarg);
+    });
+}
+
+function resizeColByDarg(event){
+    if(!modifyingColId){
+        return ;
+    }
+
+    const width = event.clientX - modifyingColId.offsetLeft + Excel.offsetLeft;
+    const increaseOfWidth = width - modifyingColId.clientWidth;
+    document.body.style.width = `${increaseOfWidth + document.body.clientWidth}px`;
+    Excel.style.width = `${increaseOfWidth + document.body.clientWidth}px`;
+
+
+    console.log(width + " " + increaseOfWidth + " " + document.body.clientWidth);
+
+    let p = modifyingColId;
+    while(p) {
+        p.style.width = `${width}px`;
+        p = p.nextRow;
+    }
+}
+
+
 window.addEventListener("keydown", event => {
     if(event.code === "Enter"){
         //选择下一行的同列cell

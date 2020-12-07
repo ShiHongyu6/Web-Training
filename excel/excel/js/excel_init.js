@@ -12,6 +12,8 @@ function init(){
     initRolId();
 
     initCells();
+
+    Excel = document.querySelector(".excel");
 }
 
 
@@ -77,6 +79,7 @@ function initColId() {
     for(let i = 0; i < INIT_INFO.COL_NUMBER; ++i){
         const newNode = document.createElement("div");
         newNode.innerHTML = getColId(i);
+        newNode.colId = i;
         colIdFragment.appendChild(newNode);
         CELLS.colIdList.push(newNode);
     }
@@ -90,6 +93,7 @@ function initRolId() {
     for(let i = 0; i < INIT_INFO.ROW_NUMBER; ++i){
         const newNode = document.createElement("div");
         newNode.innerHTML = i + 1;
+        newNode.rowId = i;
         rowIdFragment.appendChild(newNode);
         CELLS.rowIdList.push(newNode);
     }

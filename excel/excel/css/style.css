@@ -6,7 +6,7 @@
 
 .excel__top-container, .excel__row-id-container {
     display: flex;
-    background-color: rgb(230, 230, 230);
+    background-color: #e6e6e6;
 }
 
 .excel__icon--all-select{
@@ -42,15 +42,6 @@
     flex-basis: 0;
 }
 
-.excel__col-id-container > div:hover, .excel__row-id-container > div:hover {
-    background-color: #28e9bf;
-    cursor: grab;
-}
-
-.excel__col-id-container > div:active, .excel__row-id-container > div:active {
-    
-    cursor: grabbing;
-}
 
 .excel__col-id-container > div {
     display: flex;
@@ -93,6 +84,9 @@
     border-color: rgb(153, 153, 153);
 }
 
+.excel__col-id-container > div, .excel__row-id-container > div{
+    user-select: none;
+}
 
 
 .excel__cells-container > div{
@@ -110,25 +104,6 @@
 .excel__cells-container > div.editable{
     overflow: visible; /*编辑时不隐藏*/
 }
-
-.excel .selectedByDrag-top {
-    box-shadow: 0 -2px 0 rgb(32, 178, 170);
-}
-
-.excel .selectedByDrag-left {
-    box-shadow: -2px 0 0 rgb(32, 178, 170);
-}
-
-.excel .selectedByDrag-right {
-    box-shadow: 2px 0 0 rgb(32, 178, 170);
-    border-right-color: rgb(32, 178, 170);
-}
-
-.excel .selectedByDrag-bottom{
-    box-shadow: 0 2px 0 rgb(32, 178, 170);
-    border-bottom-color: rgb(32, 178, 170);
-}
-
 .excel .selectedByDrag {
     background-color: #aaa;
 }

@@ -5,9 +5,13 @@ const INIT_INFO = {
     ROW_ID_WIDTH  : 30,
     CELL_WIDTH    : 73,
     CELL_HEIGHT   : 18,
-    BORDER        : 1
+    BORDER        : 1, 
+
+    //行/列id上鼠标改变时位置的百分比
+    MODIFY_CURSOR_BOUNDARY_PERCENT: 0.1
 };
 
+let Excel;
 
 const CELLS = {
     //保存每一列的列id节点
