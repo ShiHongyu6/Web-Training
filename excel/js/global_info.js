@@ -73,14 +73,6 @@ function switchSelectedCellByClick(cell){
     }
 }
 
-/**
- * 修改拖拽起点的样式
- */
-function switchSelectedCellByClickOnDrag(){
-    switchSelectedCellByClick();
-    selectedCellByClick.classList.add("selectedByClickOnDrag");
-}
-
 
 //拖拽选择时的遮盖
 let coverElement = null;

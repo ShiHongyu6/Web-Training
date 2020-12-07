@@ -58,7 +58,7 @@ function initCSS() {
             height:${INIT_INFO.CELL_HEIGHT}px;
         }
 
-        body {
+        .excel {
             width :${INIT_INFO.ROW_ID_WIDTH + INIT_INFO.COL_NUMBER * INIT_INFO.CELL_WIDTH + (INIT_INFO.COL_NUMBER + 1) * INIT_INFO.BORDER}px;
         }
 

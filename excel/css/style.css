@@ -5,6 +5,12 @@
 }
 
 
+.excel {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 0;
+}
+
 .excel__top-container, .excel__row-id-container {
     display: flex;
     background-color: #e6e6e6;
@@ -40,6 +46,7 @@
 
 .excel__col-id-container {
     display: flex;
+    flex: 0 0 auto;
 }
 
 
@@ -55,10 +62,14 @@
 
 .excel__row-id-container{
     flex-direction: column;
+    flex: 0 0 auto;
 }
 
 .excel__cells-container {
     position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    flex: 1 1 0;
 }
 
 .excel__cells-container:hover {
@@ -114,9 +125,4 @@ div.cells-cover{
     position: absolute;
     background-color: rgb(188, 188, 188, 0.5);
     outline: 2px solid rgb(32, 178, 170);
-}
-
-.excel .selectedByClickOnDrag {
-    z-index: 100;
-    background-color: #fff;
 }

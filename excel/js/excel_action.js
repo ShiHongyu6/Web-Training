@@ -76,8 +76,6 @@ function dragSelect(event){
     coverElement.style.top = `${coverTop}px`;
     coverElement.style.display = "block";
 
-    
-    switchSelectedCellByClickOnDrag();
 }
 
 
@@ -159,10 +157,9 @@ function resizeColByDarg(event){
         return ;
     }
 
-    const width = event.clientX - modifyingColId.offsetLeft + Excel.offsetLeft;
-    const increaseOfWidth = width - modifyingColId.clientWidth;
-    document.body.style.width = `${increaseOfWidth + document.body.clientWidth}px`;
-    console.log(modifyingColId.clientWidth);
+    const width = Math.ceil(event.clientX - modifyingColId.offsetLeft + Excel.offsetLeft);
+    const increaseOfWidth = Math.ceil(width - modifyingColId.clientWidth);
+    Excel.style.width = `${Math.ceil(increaseOfWidth + Excel.clientWidth)}px`;
     let p = modifyingColId;
     while(p) {
         p.style.width = `${width}px`;
