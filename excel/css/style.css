@@ -4,6 +4,7 @@
     padding: 0;
 }
 
+
 .excel__top-container, .excel__row-id-container {
     display: flex;
     background-color: #e6e6e6;
@@ -39,7 +40,6 @@
 
 .excel__col-id-container {
     display: flex;
-    flex-basis: 0;
 }
 
 

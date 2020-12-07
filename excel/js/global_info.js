@@ -1,5 +1,5 @@
 const INIT_INFO = {
-    COL_NUMBER    : 26,
+    COL_NUMBER    : 5,
     ROW_NUMBER    : 100,
     COL_ID_HEIGHT : 26,
     ROW_ID_WIDTH  : 30,
