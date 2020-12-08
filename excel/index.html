@@ -4,26 +4,28 @@
     <meta charset="UTF-8">
     <title>Excel</title>
     <link rel="stylesheet" href="css/style.css" type="text/css">
-    <script type="text/javascript" src="js/global_info.js"></script>
-    <script type="text/javascript" src="js/excel_init.js"></script>
-    <script type="text/javascript" src="js/excel_action.js"></script>
+    <script type="text/javascript" src="js/Excel.js"></script>
+    <script type="text/javascript" src="js/ExcelRenderer.js"></script>
+    <script type="text/javascript" src="js/ExcelEventHandler.js"></script>
     <script type="text/javascript" src="js/excel_main.js"></script>
 </head>
 <body>
     <div class="excel">
-        <div class="excel__top-container">
-            <i class="excel__icon--all-select">
-
-            </i>
-            <div class="excel__col-id-container">
+        <div class="excel__container">
+            <div class="excel__top-container">
+                <i class="excel__icon--all-select">
+                    
+                </i>
+                <div class="excel__col-header-container">
+                </div>
             </div>
-        </div>
-        <div class="excel__main-container">
-            <div class="excel__row-id-container">
-
-            </div>
-            <div class="excel__cells-container">
-                <div class="cells-cover"></div>
+            <div class="excel__main-container">
+                <div class="excel__row-header-container">
+                    
+                </div>
+                <div class="excel__cells-container">
+                    <div class="cells-cover"></div>
+                </div>
             </div>
         </div>
     </div>

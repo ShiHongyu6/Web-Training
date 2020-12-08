@@ -4,14 +4,17 @@
     padding: 0;
 }
 
-
 .excel {
+    user-select: none;
+}
+
+.excel__container {
     display: flex;
     flex-direction: column;
     flex: 0 0 0;
 }
 
-.excel__top-container, .excel__row-id-container {
+.excel__top-container, .excel__row-header-container {
     display: flex;
     background-color: #e6e6e6;
 }
@@ -44,23 +47,39 @@
     transform: rotate(45deg);
 }
 
-.excel__col-id-container {
+.excel__col-header-container {
     display: flex;
     flex: 0 0 auto;
 }
 
 
-.excel__col-id-container > div {
+.excel__col-header-container > div {
     display: flex;
     justify-content: center;
     align-items: flex-end;
+}
+
+.excel__col-header-container > div.excel__col-header--cell-selected{
+    position: relative;
+    background-color: #d2d2d2;
+    border-bottom-color: #087772;
+    color:#087772;
+}
+
+.excel__col-header-container > div.excel__col-header--cell-selected::after{
+    content: "";
+    display: block;
+    position: absolute;
+    width: 100%;
+    height: auto;
+    border-bottom: 2px solid #087772;
 }
 
 .excel__main-container{
     display: flex;
 }
 
-.excel__row-id-container{
+.excel__row-header-container{
     flex-direction: column;
     flex: 0 0 auto;
 }
@@ -81,13 +100,32 @@
 }
 
 
-.excel__row-id-container > div {
+.excel__row-header-container > div {
     display: flex;
+    flex-direction: column;
     justify-content: center;
     align-items: center;
 }
 
-.excel__icon--all-select, .excel__col-id-container > div, .excel__row-id-container > div , .excel__cells-container > div{
+.excel__row-header-container > div.excel__row-header--cell-selected{
+    position: relative;
+    background-color: #d2d2d2;
+    border-right-color: #087772;
+    color:#087772;
+}
+
+.excel__row-header-container > div.excel__row-header--cell-selected::after{
+    content: "";
+    display: flex;
+    position: absolute;
+    align-self: flex-end;
+    height: 100%;
+    border-right: 2px solid #087772;
+}
+
+
+
+.excel__icon--all-select, .excel__col-header-container > div, .excel__row-header-container > div , .excel__cells-container > div{
     border-style: solid;
     border-top-style: none;
     border-left-style: none;
@@ -95,22 +133,31 @@
     border-color: rgb(153, 153, 153);
 }
 
-.excel__col-id-container > div, .excel__row-id-container > div{
+.excel__col-header-container > div, .excel__row-header-container > div{
     user-select: none;
 }
 
-
 .excel__cells-container > div{
-    float: left;
+    display: flex;
+    position: relative;
     white-space:nowrap; /* 让cell中的内容不含行  横向溢出 */
     overflow: hidden; /* text-overflow依赖这个属性; */
     text-overflow: ellipsis;/* 溢出部分省略后 用...代替 */
 }
 
-.excel .selectedByClick{
-    box-shadow: 0 0 0 2px rgb(32, 178, 170);
-    border-color: rgb(32, 178, 170);
+
+.excel__cells-container > div.excel__cell--selected{
+    border-color: #087772;
 }
+
+.excel__cell--selected::after{
+    content: "";
+    display: flex;
+    flex: 1 1 0;
+    border: 1px solid #087772;
+}
+
+
 
 .excel__cells-container > div.editable{
     overflow: visible; /*编辑时不隐藏*/
