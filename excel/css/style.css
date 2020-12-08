@@ -153,6 +153,7 @@
 .excel__cell--selected::after{
     content: "";
     display: flex;
+    
     flex: 1 1 0;
     border: 1px solid #087772;
 }

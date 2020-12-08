@@ -155,18 +155,28 @@ ExcelRenderer.prototype.bindEvent = function() {
 
 
 ExcelRenderer.prototype.render = function() {
-    //从上一个状态转出
-    this.excelEventHandler.status.preStatus.turnoff(this);
-    //转入当前状态
-    this.excelEventHandler.status.currentStatus.turnon(this);
+    //取得"卸载"命令队列
+    const unload = this.excelEventHandler.unloadCommandQueue;
+    //执行卸载队列中的命令
+    while(unload.length){
+        const command = unload.shift();
+        command.action.call(this, command.element);
+    }
+
+    //取得"加载"命令队列
+    const load = this.excelEventHandler.loadCommandQueue;
+    //执行加载队列中的命令
+    while(load.length){
+        const command = load.shift();
+        command.action.call(this,command.element);
+    }
 };
 
 
 /**
  * 单选一个cell
  */
-ExcelRenderer.prototype.mousedownCellToSelect = function() {
-    const cell = this.excelEventHandler.mousedownCell.currentCell;
+ExcelRenderer.prototype.mousedownCellToSelect = function(cell) {
     if(cell){
         cell.classList.add("excel__cell--selected");
         this.cells.rowHeaderList[cell.rowId].classList.add("excel__row-header--cell-selected");
@@ -177,8 +187,7 @@ ExcelRenderer.prototype.mousedownCellToSelect = function() {
 /**
  * 取消上一次单选
  */
-ExcelRenderer.prototype.cancelLastSingleSelect = function() {
-    const cell = this.excelEventHandler.mousedownCell.preCell;
+ExcelRenderer.prototype.cancelSingleSelect = function(cell) {
     if(cell){
         cell.classList.remove("excel__cell--selected");
         this.cells.rowHeaderList[cell.rowId].classList.remove("excel__row-header--cell-selected");
@@ -186,17 +195,19 @@ ExcelRenderer.prototype.cancelLastSingleSelect = function() {
     }
 };
 
-ExcelRenderer.prototype.openEdit = function() {
-    const cell = this.excelEventHandler.editCell;
-    console.log("load");
+/**
+ * 开启一个cell的编辑
+ */
+ExcelRenderer.prototype.openEdit = function(cell) {
     if(cell){
         cell.contentEditable = "true";
         cell.focus();
     }
 };
-
-ExcelRenderer.prototype.closeLastEdit = function() {
-    const cell = this.excelEventHandler.editCell;
+/**
+ * 关闭一个cell的编辑
+ */
+ExcelRenderer.prototype.closeEdit = function(cell) {
     if(cell){
         cell.contentEditable = "false";
     }
