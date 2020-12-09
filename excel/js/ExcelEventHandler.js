@@ -74,10 +74,11 @@ ExcelEventHandler.prototype.mousedownCellToSelectHandler = function(event){
     // }
 
     // this.excelRenderer.render();
-    event.offsetLeft
+    
     
 
-    const selectBoxLeft = event.target
+    const selectBoxLeft = event.target.offsetLeft;
+    const selectBoxTop  = event.target.offsetTop; 
 };
 
 ExcelEventHandler.prototype.dblClickToEditCellHandler = function(event) {
