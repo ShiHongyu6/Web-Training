@@ -9,10 +9,12 @@ function ExcelRenderer(excel, cellBorder, excelEventHandler){
     this.cellBorder = cellBorder;
     this.excelEventHandler = excelEventHandler;
     
-    this.excelElement = document.querySelector(".excel");
+    this.excelElement       = document.querySelector(".excel");
     this.colHeaderContainer = this.excelElement.querySelector(".excel__col-header-container");
     this.rowHeaderContainer = this.excelElement.querySelector(".excel__row-header-container");
     this.cellsContainer     = this.excelElement.querySelector(".excel__cells-container");
+    this.selectBox          = this.cellsContainer.querySelector(".excel__select-box--drag");
+    this.selectBox.mousedownBox = this.selectBox.querySelector(".select-box--mouseDown");
     //将cells构成的矩阵使用链表的形式存储起来
     this.cells = {
         colHeaderList : [],
@@ -23,8 +25,6 @@ function ExcelRenderer(excel, cellBorder, excelEventHandler){
     this.init();
     //将实例对象与事件处理器绑定
     excelEventHandler.bindExcelRenderer(this);
-    //将节点的事件与EventHandler关联
-    this.bindEvent();
 }
 
 ExcelRenderer.prototype.init = function() {
@@ -145,13 +145,6 @@ ExcelRenderer.prototype.initCells = function(cellsContainerElement) {
     cellsContainerElement.appendChild(cellsFragment);
 }
 
-/**
- * 绑定事件
- */
-ExcelRenderer.prototype.bindEvent = function() {
-    this.cellsContainer.addEventListener("mousedown", this.excelEventHandler.mousedownCellToSelectHandler);
-    this.cellsContainer.addEventListener("dblclick", this.excelEventHandler.dblClickToEditCellHandler);
-};
 
 
 ExcelRenderer.prototype.render = function() {
@@ -213,6 +206,50 @@ ExcelRenderer.prototype.closeEdit = function(cell) {
     }
 };
 
+
+/**
+ * 设置选择框的大小与定位
+ * @param {number} selectBoxX 选择框左上角X坐标
+ * @param {number} selectBoxY 选择框左上角Y坐标
+ * @param {number} selectBoxWidth 选择框宽度
+ * @param {number} selectBoxHeight 选择框高度
+ * @param {number} mousedownBoxPosition 0表示左上角; 1表示右上角; 2表示右下角; 3表示左下角
+ * @param {number} mousedownBoxWidth 宽度
+ * @param {number} mousedownBoxHeight 长度
+ * @param {number} borderWidth 边框宽度
+ */
+ExcelRenderer.prototype.setSelectBoxOnDragCellSelect = function(selectBoxX, selectBoxY, selectBoxWidth, selectBoxHeight, mousedownBoxPosition, mousedownBoxWidth, mousedownBoxHeight, borderWidth){
+    this.selectBox.style.left   = `${selectBoxX - borderWidth}px`;
+    this.selectBox.style.top    = `${selectBoxY - borderWidth}px`;
+    this.selectBox.style.width  = `${selectBoxWidth}px`;
+    this.selectBox.style.height = `${selectBoxHeight}px`
+    this.selectBox.mousedownBox.style.width  = `${mousedownBoxWidth}px`;
+    this.selectBox.mousedownBox.style.height = `${mousedownBoxHeight}px`;
+    let mousedownBoxLeft = 0;
+    let mousedownBoxTop  = 0;
+    switch(mousedownBoxPosition){
+        case 0:
+            mousedownBoxLeft = 0;
+            mousedownBoxTop  = 0;
+            break;
+        case 1:
+            mousedownBoxLeft = selectBoxWidth - mousedownBoxWidth;
+            mousedownBoxTop  = 0;
+            break;
+        case 2:
+            mousedownBoxLeft = 0;
+            mousedownBoxTop = selectBoxHeight - mousedownBoxHeight;
+            break;
+        case 3:
+            mousedownBoxLeft = selectBoxWidth - mousedownBoxWidth;
+            mousedownBoxTop = selectBoxHeight - mousedownBoxHeight;
+            break;
+    }
+    this.selectBox.mousedownBox.style.left = `${mousedownBoxLeft}px`;
+    this.selectBox.mousedownBox.style.top  = `${mousedownBoxTop}px`;
+
+    this.selectBox.style.display = "block";
+}
 
 function getColId(id){
     id = Number(id);

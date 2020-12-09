@@ -47,6 +47,9 @@ ExcelEventHandler.prototype.bindExcelRenderer = function(excelRenderer){
      */
     this.mousedownCellToSelectHandler = this.mousedownCellToSelectHandler.bind(this);
     this.dblClickToEditCellHandler = this.dblClickToEditCellHandler.bind(this);
+
+    this.excelRenderer.cellsContainer.addEventListener("mousedown", this.mousedownCellToSelectHandler);
+    this.excelRenderer.cellsContainer.addEventListener("dblclick", this.dblClickToEditCellHandler);
 };
 
 ExcelEventHandler.prototype.mousedownCellToSelectHandler = function(event){
@@ -56,21 +59,23 @@ ExcelEventHandler.prototype.mousedownCellToSelectHandler = function(event){
         return;
     }
 
-    //给鼠标按下的cell添加样式
-    this.loadCommandQueue.push(new Command(event.target, this.excelRenderer.mousedownCellToSelect));
-    //去掉上一次选择的cell的样式
-    if(this.mousedownCell) {
-        this.unloadCommandQueue.push(new Command(this.mousedownCell, this.excelRenderer.cancelSingleSelect));
-    }
-    //记录这次的选择
-    this.mousedownCell = event.target;
+    // //给鼠标按下的cell添加样式
+    // this.loadCommandQueue.push(new Command(event.target, this.excelRenderer.mousedownCellToSelect));
+    // //去掉上一次选择的cell的样式
+    // if(this.mousedownCell) {
+    //     this.unloadCommandQueue.push(new Command(this.mousedownCell, this.excelRenderer.cancelSingleSelect));
+    // }
+    // //记录这次的选择
+    // this.mousedownCell = event.target;
 
-    //如果存在正在编辑的cell 关闭正在编辑的cell
-    if(this.editingCell){
-        this.unloadCommandQueue.push(new Command(this.editingCell, this.excelRenderer.closeEdit));    
-    }
+    // //如果存在正在编辑的cell 关闭正在编辑的cell
+    // if(this.editingCell){
+    //     this.unloadCommandQueue.push(new Command(this.editingCell, this.excelRenderer.closeEdit));    
+    // }
 
-    this.excelRenderer.render();
+    // this.excelRenderer.render();
+
+    // const selectBoxLeft = event.target
 };
 
 ExcelEventHandler.prototype.dblClickToEditCellHandler = function(event) {

@@ -163,14 +163,22 @@
 .excel__cells-container > div.editable{
     overflow: visible; /*编辑时不隐藏*/
 }
-.excel .selectedByDrag {
-    background-color: #aaa;
+
+
+/* 拖拽时的选择框 */
+.excel__cells-container > div.excel__select-box--drag {
+    position: absolute;
+    z-index: 1;
+    display: none;
+    background-color: rgba(170, 170, 170, 0.5);
+    border-color: #087772;
+    border-style: solid;
+    border-width: 2px;
 }
 
-
-div.cells-cover{
-    display: none;
+/* 拖拽之前鼠标按下的cell */
+.select-box--mouseDown {
     position: absolute;
-    background-color: rgb(188, 188, 188, 0.5);
-    outline: 2px solid rgb(32, 178, 170);
+    z-index: 2;
+    background-color: #fff;
 }
