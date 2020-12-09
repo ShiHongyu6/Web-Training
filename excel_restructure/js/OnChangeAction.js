@@ -46,7 +46,7 @@ const OnChangeActions = {
     ),
     RemoveRow : new OnChangeAction(
         function(args){
-            
+
         }
     )
 };
@@ -62,7 +62,7 @@ for(let i = 0; i < 5; ++i){
     rowHeaders.push(new RowHeader(20, ""));
 }
 
-const excel = new Excel(null, colHeaders, rowHeaders, null);
+const excel = new Excel(3, 5, 20, 20, 20, 20);
 
 function execute(onChangeAction, args){
     onChangeAction.action(args);
@@ -70,5 +70,6 @@ function execute(onChangeAction, args){
 
 excel.setOnChangeCallBack(execute);
 
+excel.setCellContent(2, 2, "0");
 
-
+// excel.addRow(0, 20);
