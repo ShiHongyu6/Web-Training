@@ -16,11 +16,13 @@
 
 .excel__top-container, .excel__row-header-container {
     display: flex;
-    background-color: #e6e6e6;
 }
 
 .excel__icon--all-select{
-    display: block;
+    display: flex;
+    flex-grow: 0;
+    flex-shrink: 0;
+    background-color: #e6e6e6;
     position: relative;
 }
 
@@ -38,28 +40,39 @@
     left: 15px;
 }
 
+
 .excel__icon--all-select::after {
     width: 12px;
     height: 18px;
     top: 4px;
     left: 12px;
-    background-color: rgb(230, 230, 230);
+    background-color: inherit;
     transform: rotate(45deg);
+}
+
+.excel__icon--all-select.all-select--active {
+    background-color: rgb(159, 205, 179);
+}
+
+.excel__icon--all-select.all-select--active::before {
+    background-color: #087772;
 }
 
 .excel__col-header-container {
     display: flex;
+    position: relative;
     flex: 0 0 auto;
 }
 
 
 .excel__col-header-container > div {
     display: flex;
+    background-color: #e6e6e6;
     justify-content: center;
     align-items: flex-end;
 }
 
-.excel__col-header-container > div.excel__col-header--cell-selected{
+/* .excel__col-header-container > div.excel__col-header--cell-selected{
     position: relative;
     background-color: #d2d2d2;
     border-bottom-color: #087772;
@@ -73,20 +86,22 @@
     width: 100%;
     height: auto;
     border-bottom: 2px solid #087772;
-}
+} */
 
 .excel__main-container{
     display: flex;
 }
 
 .excel__row-header-container{
+    background-color: #e6e6e6;
+    position: relative;
     flex-direction: column;
-    flex: 0 0 auto;
 }
 
 .excel__cells-container {
     position: relative;
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     flex: 1 1 0;
 }
@@ -95,7 +110,13 @@
     cursor: cell;
 }
 
-.excel__cells-container>div[contenteditable="true"]:hover {
+.excel__cells-container > div {
+    display: flex;
+    justify-content: flex-start;
+    flex: 1 1 0;
+}
+
+.excel__cells-container> div > div[contenteditable="true"]:hover {
     cursor: text;
 }
 
@@ -106,7 +127,7 @@
     justify-content: center;
     align-items: center;
 }
-
+/* 
 .excel__row-header-container > div.excel__row-header--cell-selected{
     position: relative;
     background-color: #d2d2d2;
@@ -121,11 +142,11 @@
     align-self: flex-end;
     height: 100%;
     border-right: 2px solid #087772;
-}
+} */
 
 
 
-.excel__icon--all-select, .excel__col-header-container > div, .excel__row-header-container > div , .excel__cells-container > div{
+.excel__icon--all-select, .excel__col-header-container > div, .excel__row-header-container > div , .excel__cells-container > div > div{
     border-style: solid;
     border-top-style: none;
     border-left-style: none;
@@ -137,7 +158,7 @@
     user-select: none;
 }
 
-.excel__cells-container > div{
+.excel__cells-container > div > div{
     display: flex;
     position: relative;
     white-space:nowrap; /* 让cell中的内容不含行  横向溢出 */
@@ -146,39 +167,42 @@
 }
 
 
-.excel__cells-container > div.excel__cell--selected{
-    border-color: #087772;
-}
-
-.excel__cell--selected::after{
-    content: "";
-    display: flex;
-    
-    flex: 1 1 0;
-    border: 1px solid #087772;
-}
 
 
-
-.excel__cells-container > div.editable{
+.excel__cells-container > div >div.editable{
     overflow: visible; /*编辑时不隐藏*/
 }
 
 
 /* 拖拽时的选择框 */
-.excel__cells-container > div.excel__select-box--drag {
+.excel__cells-container > div.excel__select-box {
     position: absolute;
     z-index: 1;
-    display: none;
     background-color: rgba(170, 170, 170, 0.5);
     border-color: #087772;
     border-style: solid;
     border-width: 2px;
+    transition: all 0.4ms;
 }
 
 /* 拖拽之前鼠标按下的cell */
-.select-box--mouseDown {
+.excel__cells-container > div.excel__select-box--active {
     position: absolute;
     z-index: 2;
     background-color: #fff;
+}
+
+
+.excel__col-header-container > div.col-header__select-box {
+    position: absolute;
+    border-style: none;
+    border-color: #087772;
+    border-bottom-style: solid;
+}
+
+.excel__row-header-container > div.row-header__select-box {
+    position: absolute;
+    border-style: none;
+    border-color: #087772;
+    border-right-style: solid;
 }

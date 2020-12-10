@@ -125,8 +125,14 @@ function Excel(rowCount, colCount, cellWidth, cellHeight, rowHeaderWidth, colHea
     this.commandExecutor = null;
 }
 
+/**
+ * 注入命令的执行器
+ */
 Excel.prototype.setCommandExecutor = function(commandExecutor) {
     this.commandExecutor = commandExecutor;
+
+    excel.setActiveCell(0, 0);
+    excel.setSelectionArea(0, 0, 0, 0, SelectionType.Cells);
 }
 
 Excel.prototype.rowIndexBeInBoundary = function(rowIndex) {
@@ -193,23 +199,31 @@ Excel.prototype.setRowHeight = function(rowIndex, height) {
  *      rowIndex, colIndex
  * }
  */
-Excel.prototype.setSelectionArea = function(leftTop, rightBottom, selectionType){
-    if(!this.rowIndexBeInBoundary(leftTop.rowIndex)){
+Excel.prototype.setSelectionArea = function(leftTopRowIndex, leftTopColIndex, rightBottomRowIndex, rightBottomColIndex, selectionType){
+    if(!this.rowIndexBeInBoundary(leftTopRowIndex)){
         throw new Error("row-index out of bounds: index should greater than -1 and less than " + this.rowHeaders.length);
     }
-    if(!this.rowIndexBeInBoundary(rightBottom.rowIndex)){
+    if(!this.rowIndexBeInBoundary(rightBottomRowIndex)){
         throw new Error("row-index out of bounds: index should greater than -1 and less than " + this.rowHeaders.length);
     }
-    if(!this.colIndexBeInBoundary(leftTop.colIndex)){
+    if(!this.colIndexBeInBoundary(leftTopColIndex)){
         throw new Error("col-index out of bounds: index should greater than -1 and less than " + this.colHeaders.length);
     }
-    if(!this.colIndexBeInBoundary(rightBottom.colIndex)){
+    if(!this.colIndexBeInBoundary(rightBottomColIndex)){
         throw new Error("col-index out of bounds: index should greater than -1 and less than " + this.colHeaders.length);
     }
-    this.selectionArea.leftTop = leftTop;
-    this.selectionArea.rightBottom = rightBottom;
+
+    const lastLeftTopRowIndex = this.selectionArea.leftTop.rowIndex;
+    const lastLeftTopColIndex = this.selectionArea.leftTop.colIndex;
+    const lastRightBottomRowIndex = this.selectionArea.rightBottom.rowIndex;
+    const lastRightBottomColIndex = this.selectionArea.rightBottom.colIndex;
+
+    this.selectionArea.leftTop.rowIndex = leftTopRowIndex;
+    this.selectionArea.leftTop.colIndex = leftTopColIndex;
+    this.selectionArea.rightBottom.rowIndex = rightBottomRowIndex;
+    this.selectionArea.rightBottom.colIndex = rightBottomColIndex;
     this.selectionArea.selectionType = selectionType;
-    this.commandExecutor.execute(new SelectArea());
+    this.commandExecutor.execute(new ModifySelectionArea({lastLeftTopRowIndex, lastLeftTopColIndex, lastRightBottomRowIndex, lastRightBottomColIndex, leftTopRowIndex, leftTopColIndex, rightBottomRowIndex, rightBottomColIndex, selectionType}));
 }
 
 Excel.prototype.setActiveCell = function(rowIndex, colIndex) {
@@ -222,20 +236,14 @@ Excel.prototype.setActiveCell = function(rowIndex, colIndex) {
 
     this.activeCell.rowIndex = rowIndex;
     this.activeCell.colIndex = colIndex;
+    const activeCellWidth  = this.colHeaders[colIndex].width;
+    const activeCellHeight = this.rowHeaders[rowIndex].height;
+    let cellContent = "";
+    if(this.cells[rowIndex][colIndex] && this.cells[rowIndex][colIndex].getContent()) {
+        cellContent = this.cells[rowIndex][colIndex].getContent();
+    } 
 
-    /**计算activeCell的坐标 宽度 高度*/
-    let coordinateX = 0;
-    for(let i = 0; i < colIndex; ++i) { 
-        coordinateX += this.colHeaders[i].getWidth();
-    }
-    let coordinateY = 0;
-    for(let i = 0; i < rowIndex; ++i) {
-        coordinateY += this.rowHeaders[i].getHeight();
-    }
-    let activeCellWidth = this.colHeaders[colIndex].getWidth();
-    let activeCellHeight = this.rowHeaders[rowIndex].getHeight();
-
-    this.commandExecutor.execute(new SelectCell({colIndex, rowIndex, coordinateX, coordinateY, activeCellWidth, activeCellHeight}));
+    this.commandExecutor.execute(new ModifyActiveCell({colIndex, rowIndex, activeCellWidth, activeCellHeight, cellContent}));
 }
 
 // Excel.prototype.setEditingCell = function(rowIndex, colIndex) {
@@ -271,7 +279,7 @@ Excel.prototype.addCol = function(colIndex, width) {
         this.cells[i].splice(colIndex, 0, undefined);
     }
 
-    this.onChange(OnChangeActions.AddCol, colIndex);
+    this.commandExecutor.execute(new Refresh(null));
 }
 
 Excel.prototype.removeCol = function(colIndex) {
@@ -289,7 +297,7 @@ Excel.prototype.removeCol = function(colIndex) {
     }
 
 
-    this.onChange(OnChangeActions.RemoveCol, colIndex);
+    this.commandExecutor.execute(new Refresh(null));
 }
 
 Excel.prototype.addRow = function(rowIndex, height) {
@@ -306,7 +314,7 @@ Excel.prototype.addRow = function(rowIndex, height) {
     }
 
     this.cells.splice(rowIndex, 0, new Array(0));
-    this.onChange(OnChangeActions.AddRow, rowIndex);
+    this.commandExecutor.execute(new Refresh(null));
 }
 
 Excel.prototype.removeRow = function(rowIndex) {
@@ -318,7 +326,7 @@ Excel.prototype.removeRow = function(rowIndex) {
     for(let i = rowIndex; i < this.rowHeaders.length; ++i) {
         this.rowHeaders[i].setContent(i + 1);
     }
-    this.onChange(OnChangeActions.RemoveRow, rowIndex);
+    this.commandExecutor.execute(new Refresh(null));
 }
 
 Excel.prototype.setColHeaderContent = function(colIndex, content) {
