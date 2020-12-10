@@ -9,16 +9,22 @@ const INIT_INFO = {
     SELECT_BORDER : 2
 };
 
-const excel = new Excel(10, 5, 73, 18, 30, 26);
+const excel = new Excel(100, 30, 73, 18, 30, 26);
 
 
 window.onload = function() {
     // const excel = new Excel(INIT_INFO.ROW_NUMBER, INIT_INFO.COL_NUMBER, INIT_INFO.CELL_WIDTH, INIT_INFO.CELL_HEIGHT, INIT_INFO.ROW_HEADER_WIDTH, INIT_INFO.COL_HEADER_HEIGHT);
     // const excelElement = new ExcelRenderer(excel, INIT_INFO.BORDER, new ExcelEventHandler());
 
+    
+    const excelRenderer = new ExcelRenderer(excel, 1);
+    
+    console.log(excelRenderer);
+    
+    excel.setCommandExecutor(excelRenderer);
+
+
     excel.setCellContent(2, 2, "0");
 
-    const excelRenderer = new ExcelRenderer(excel, 1, null);
-    //设置命令的执行者为excelRenderer
-    excel.setCommandExecutor(excelRenderer);
+    const excelEventHandler = new ExcelEventHandler(excelRenderer);
 };

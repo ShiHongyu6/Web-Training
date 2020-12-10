@@ -355,6 +355,7 @@ Excel.prototype.setCellContent = function(rowIndex, colIndex, content) {
         this.cells[rowIndex][colIndex] = new Cell();
     }
     this.cells[rowIndex][colIndex].setContent(content);
+    this.commandExecutor.execute(new ModifyCellContent({rowIndex, colIndex, content}));
 }
 
 

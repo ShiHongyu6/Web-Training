@@ -109,3 +109,13 @@ inheritPrototype(Refresh, Command);
 Refresh.prototype.action = function(executor) {
     executor.refresh();
 }
+
+
+//修改一个行的高度后 给渲染器发送消息
+function ModifyCellContent(args) {
+    Command.call(this, args);
+}
+inheritPrototype(ModifyCellContent, Command);
+ModifyCellContent.prototype.action = function(executor) {
+    executor.setCellContent(this.args.rowIndex, this.args.colIndex, this.args.content);
+}

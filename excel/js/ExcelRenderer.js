@@ -4,10 +4,9 @@
  * @param {number} cellBorder 
  * @param {ExcelEventHandler} excelEventHandler 
  */
-function ExcelRenderer(excel, cellBorder, excelEventHandler){
+function ExcelRenderer(excel, cellBorder){
     this.excel = excel;
     this.cellBorder = cellBorder;
-    this.excelEventHandler = excelEventHandler;
     
     //从Dom中取出需要的元素
     this.getDomElement();
@@ -41,6 +40,9 @@ ExcelRenderer.prototype.getDomElement = function() {
     //用来存储rowHeader的DOM
     this.rowHeaderElements = [];
     //这些DOM节点都存储了各自行/列的样式(style节点)  可通过修改这个style节点的innerHTML来修改样式
+
+    this.cellElements = [];
+
 
     //全选按钮
     this.allSelectButton   = document.querySelector(".excel__icon--all-select"); 
@@ -142,6 +144,7 @@ ExcelRenderer.prototype.initCells = function() {
     for(let i = 0; i < this.excel.getRowCount(); ++i){
         const newRowNode = document.createElement("div");
         cellsFragment.appendChild(newRowNode);
+        this.cellElements.push(new Array(0));
         for(let j = 0; j < this.excel.getColCount(); ++j){
             const cell = this.excel.cells[i][j];
             const cellElement = document.createElement("div");
@@ -149,56 +152,12 @@ ExcelRenderer.prototype.initCells = function() {
                 cellElement.innerHTML = cell.getContent();
             }
             newRowNode.appendChild(cellElement);
+            this.cellElements[this.cellElements.length - 1].push(cellElement);
         }
     }
     this.cellsContainer.appendChild(cellsFragment);
 }
 
-
-
-// ExcelRenderer.prototype.render = function() {
-//     //取得"卸载"命令队列
-//     const unload = this.excelEventHandler.unloadCommandQueue;
-//     //执行卸载队列中的命令
-//     while(unload.length){
-//         const command = unload.shift();
-//         command.action.call(this, command.element);
-//     }
-
-//     //取得"加载"命令队列
-//     const load = this.excelEventHandler.loadCommandQueue;
-//     //执行加载队列中的命令
-//     while(load.length){
-//         const command = load.shift();
-//         command.action.call(this,command.element);
-//     }
-// };
-
-/**
- * 根据excelModel绘制
- */
-ExcelRenderer.prototype.render = function() {
-    
-};
-
-
-/**
- * 开启一个cell的编辑
- */
-ExcelRenderer.prototype.openEdit = function(cell) {
-    if(cell){
-        cell.contentEditable = "true";
-        cell.focus();
-    }
-};
-/**
- * 关闭一个cell的编辑
- */
-ExcelRenderer.prototype.closeEdit = function(cell) {
-    if(cell){
-        cell.contentEditable = "false";
-    }
-};
 
 
 
@@ -319,4 +278,41 @@ ExcelRenderer.prototype.refresh = function() {
     //默认选择(0, 0)
     excel.setActiveCell(0, 0);
     excel.setSelectionArea(0, 0, 0, 0, SelectionType.Cells);
+}
+
+
+ExcelRenderer.prototype.transformCoordinateToIndex = function(x, y) {
+    const returnValue = {
+        rowIndex: null,
+        colIndex: null
+    };
+
+
+    let sum = 0;
+    if(x != null){
+        for(let i = 0; i < this.excel.colHeaders.length; ++i){
+            sum += this.excel.colHeaders[i].getWidth() + this.cellBorder;
+            if(x < sum){
+                returnValue.colIndex = i;
+                break;
+            }
+        }
+    }
+
+    sum = 0;
+    if(y != null){
+        for(let i = 0; i < this.excel.rowHeaders.length; ++i) {
+            sum += this.excel.rowHeaders[i].getHeight() + this.cellBorder;
+            if(y < sum){
+                returnValue.rowIndex = i;
+                break;
+            }
+        }
+    }
+
+    return returnValue;
+}
+
+ExcelRenderer.prototype.setCellContent = function(rowIndex, colIndex, content) {
+    this.cellElements[rowIndex][colIndex].innerHTML = content;
 }

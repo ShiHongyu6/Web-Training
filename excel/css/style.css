@@ -26,6 +26,10 @@
     position: relative;
 }
 
+.excel__icon--all-select:hover{
+    cursor: cell;
+}
+
 .excel__icon--all-select::before, .excel__icon--all-select::after {
     content: "";
     display: block;
@@ -72,21 +76,6 @@
     align-items: flex-end;
 }
 
-/* .excel__col-header-container > div.excel__col-header--cell-selected{
-    position: relative;
-    background-color: #d2d2d2;
-    border-bottom-color: #087772;
-    color:#087772;
-}
-
-.excel__col-header-container > div.excel__col-header--cell-selected::after{
-    content: "";
-    display: block;
-    position: absolute;
-    width: 100%;
-    height: auto;
-    border-bottom: 2px solid #087772;
-} */
 
 .excel__main-container{
     display: flex;
@@ -113,10 +102,11 @@
 .excel__cells-container > div {
     display: flex;
     justify-content: flex-start;
+    outline: none;
     flex: 1 1 0;
 }
 
-.excel__cells-container> div > div[contenteditable="true"]:hover {
+.excel__cells-container > div[contenteditable="true"]:hover {
     cursor: text;
 }
 
