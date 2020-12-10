@@ -1,0 +1,198 @@
+*{
+    margin: 0;
+    border: 0;
+    padding: 0;
+}
+
+.excel {
+    user-select: none;
+}
+
+.excel__container {
+    display: flex;
+    flex-direction: column;
+    flex: 0 0 0;
+}
+
+.excel__top-container, .excel__row-header-container {
+    display: flex;
+}
+
+.excel__icon--all-select{
+    display: flex;
+    flex-grow: 0;
+    flex-shrink: 0;
+    background-color: #e6e6e6;
+    position: relative;
+}
+
+.excel__icon--all-select:hover{
+    cursor: cell;
+}
+
+.excel__icon--all-select::before, .excel__icon--all-select::after {
+    content: "";
+    display: block;
+    position: absolute;
+}
+
+.excel__icon--all-select::before {
+    background-color: rgb(180, 180, 180);
+    width: 12px;
+    height: 12px;
+    top: 11px;
+    left: 15px;
+}
+
+
+.excel__icon--all-select::after {
+    width: 12px;
+    height: 18px;
+    top: 4px;
+    left: 12px;
+    background-color: inherit;
+    transform: rotate(45deg);
+}
+
+.excel__icon--all-select.all-select--active {
+    background-color: rgb(159, 205, 179);
+}
+
+.excel__icon--all-select.all-select--active::before {
+    background-color: #087772;
+}
+
+.excel__col-header-container {
+    display: flex;
+    position: relative;
+    flex: 0 0 auto;
+}
+
+
+.excel__col-header-container > div {
+    display: flex;
+    background-color: #e6e6e6;
+    justify-content: center;
+    align-items: flex-end;
+}
+
+
+.excel__main-container{
+    display: flex;
+}
+
+.excel__row-header-container{
+    background-color: #e6e6e6;
+    position: relative;
+    flex-direction: column;
+}
+
+.excel__cells-container {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    flex: 1 1 0;
+}
+
+.excel__cells-container:hover {
+    cursor: cell;
+}
+
+.excel__cells-container > div {
+    display: flex;
+    justify-content: flex-start;
+    outline: none;
+    flex: 1 1 0;
+}
+
+.excel__cells-container > div[contenteditable="true"]:hover {
+    cursor: text;
+}
+
+
+.excel__row-header-container > div {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+/* 
+.excel__row-header-container > div.excel__row-header--cell-selected{
+    position: relative;
+    background-color: #d2d2d2;
+    border-right-color: #087772;
+    color:#087772;
+}
+
+.excel__row-header-container > div.excel__row-header--cell-selected::after{
+    content: "";
+    display: flex;
+    position: absolute;
+    align-self: flex-end;
+    height: 100%;
+    border-right: 2px solid #087772;
+} */
+
+
+
+.excel__icon--all-select, .excel__col-header-container > div, .excel__row-header-container > div , .excel__cells-container > div > div{
+    border-style: solid;
+    border-top-style: none;
+    border-left-style: none;
+    outline: none;
+    border-color: rgb(153, 153, 153);
+}
+
+.excel__col-header-container > div, .excel__row-header-container > div{
+    user-select: none;
+}
+
+.excel__cells-container > div > div{
+    display: flex;
+    position: relative;
+    white-space:nowrap; /* 让cell中的内容不含行  横向溢出 */
+    overflow: hidden; /* text-overflow依赖这个属性; */
+    text-overflow: ellipsis;/* 溢出部分省略后 用...代替 */
+}
+
+
+
+
+.excel__cells-container > div >div.editable{
+    overflow: visible; /*编辑时不隐藏*/
+}
+
+
+/* 拖拽时的选择框 */
+.excel__cells-container > div.excel__select-box {
+    position: absolute;
+    z-index: 1;
+    background-color: rgba(170, 170, 170, 0.5);
+    border-color: #087772;
+    border-style: solid;
+    border-width: 2px;
+    transition: all 0.4ms;
+}
+
+/* 拖拽之前鼠标按下的cell */
+.excel__cells-container > div.excel__select-box--active {
+    position: absolute;
+    z-index: 2;
+    background-color: #fff;
+}
+
+
+.excel__col-header-container > div.col-header__select-box {
+    position: absolute;
+    border-style: none;
+    border-color: #087772;
+    border-bottom-style: solid;
+}
+
+.excel__row-header-container > div.row-header__select-box {
+    position: absolute;
+    border-style: none;
+    border-color: #087772;
+    border-right-style: solid;
+}
