@@ -14,7 +14,7 @@ BaseCell.prototype.getContent = function() {
 function Header(width, height, content) {
     this.width = width;
     this.height = height;
-    BaseCell.call(this.content);
+    BaseCell.call(this, content);
 }
 inheritPrototype(Header, BaseCell);
 Header.prototype.setHeight = function(height) {
@@ -74,6 +74,22 @@ inheritPrototype(CornerHeader, Header);
 /*****CornerHeader  End**** */
 
 
+/**
+ * 选择cell时 包括
+ * 1. 通过点击或者在cell上拖拽
+ * 2. 选择一整行
+ * 3. 选择一整列
+ * 4. 全选
+ */
+const SelectionType = {
+    Cells: "cells",
+    FullRow: "fullRow",
+    FullCol: "fullCol", 
+    AllSelect: "allSelect"
+};
+
+
+
 function Excel(rowCount, colCount, cellWidth, cellHeight, rowHeaderWidth, colHeaderHeight){
     this.cornerHeader = new CornerHeader("");
     this.colHeaders = [];
@@ -97,9 +113,7 @@ function Excel(rowCount, colCount, cellWidth, cellHeight, rowHeaderWidth, colHea
             rowIndex: null,
             colIndex: null
         }, 
-        selectFullRow : false,
-        selectFullCol : false,
-        selectAll     : false
+        selectionType : null
     };
 
     this.activeCell = {
@@ -107,12 +121,12 @@ function Excel(rowCount, colCount, cellWidth, cellHeight, rowHeaderWidth, colHea
         colIndex: null
     }
 
-
-    this.onChange = null;
+    //命令的执行者
+    this.commandExecutor = null;
 }
 
-Excel.prototype.setOnChangeCallBack = function(onChange) {
-    this.onChange = onChange;
+Excel.prototype.setCommandExecutor = function(commandExecutor) {
+    this.commandExecutor = commandExecutor;
 }
 
 Excel.prototype.rowIndexBeInBoundary = function(rowIndex) {
@@ -122,6 +136,15 @@ Excel.prototype.rowIndexBeInBoundary = function(rowIndex) {
 Excel.prototype.colIndexBeInBoundary = function(colIndex) {
     return colIndex > -1 && colIndex < this.colHeaders.length;
 }
+
+Excel.prototype.getColCount = function() {
+    return this.colHeaders.length;
+}
+
+Excel.prototype.getRowCount = function() {
+    return this.rowHeaders.length;
+}
+
 
 Excel.prototype.getColWidth = function(colIndex) {
     if(!this.colIndexBeInBoundary(colIndex)){
@@ -150,7 +173,7 @@ Excel.prototype.setColWidth = function(colIndex, width) {
     }
 
     this.colHeaders[colIndex].setWidth(width);
-    this.onChange(OnChangeActions.ModifyColWidth, {colIndex, width});
+    this.commandExecutor.execute(new ModifyColWidth({colIndex, width}));
 }
 
 Excel.prototype.setRowHeight = function(rowIndex, height) {
@@ -161,10 +184,16 @@ Excel.prototype.setRowHeight = function(rowIndex, height) {
     if(height < 0) {
         throw new Error("invalid value of height : " + height);
     }
-    this.onChange(OnChangeActions.ModifyRowHeight, {rowIndex, width});
+    this.rowHeaders[rowIndex].setHeight(height);
+    this.commandExecutor.execute(new ModifyRowHeight({rowIndex, height}));
 }
 
-Excel.prototype.setSelectionArea = function(leftTop, rightBottom, selectFullRow, selectFullCol, selectAll){
+/**
+ * leftTop = {
+ *      rowIndex, colIndex
+ * }
+ */
+Excel.prototype.setSelectionArea = function(leftTop, rightBottom, selectionType){
     if(!this.rowIndexBeInBoundary(leftTop.rowIndex)){
         throw new Error("row-index out of bounds: index should greater than -1 and less than " + this.rowHeaders.length);
     }
@@ -179,10 +208,8 @@ Excel.prototype.setSelectionArea = function(leftTop, rightBottom, selectFullRow,
     }
     this.selectionArea.leftTop = leftTop;
     this.selectionArea.rightBottom = rightBottom;
-    this.selectFullRow = selectFullRow;
-    this.selectFullCol = selectFullCol;
-    this.selectAll     = selectAll;
-    this.onChange(OnChangeActions.ModifySelectionArea, this.selectionArea);
+    this.selectionArea.selectionType = selectionType;
+    this.commandExecutor.execute(new SelectArea());
 }
 
 Excel.prototype.setActiveCell = function(rowIndex, colIndex) {
@@ -192,9 +219,23 @@ Excel.prototype.setActiveCell = function(rowIndex, colIndex) {
     if(!this.colIndexBeInBoundary(colIndex)){
         throw new Error("col-index out of bounds: index should greater than -1 and less than " + this.colHeaders.length);
     }
+
     this.activeCell.rowIndex = rowIndex;
     this.activeCell.colIndex = colIndex;
-    this.onChange(OnChangeAction.activeCell, this.activeCell);
+
+    /**计算activeCell的坐标 宽度 高度*/
+    let coordinateX = 0;
+    for(let i = 0; i < colIndex; ++i) { 
+        coordinateX += this.colHeaders[i].getWidth();
+    }
+    let coordinateY = 0;
+    for(let i = 0; i < rowIndex; ++i) {
+        coordinateY += this.rowHeaders[i].getHeight();
+    }
+    let activeCellWidth = this.colHeaders[colIndex].getWidth();
+    let activeCellHeight = this.rowHeaders[rowIndex].getHeight();
+
+    this.commandExecutor.execute(new SelectCell({colIndex, rowIndex, coordinateX, coordinateY, activeCellWidth, activeCellHeight}));
 }
 
 // Excel.prototype.setEditingCell = function(rowIndex, colIndex) {
@@ -224,17 +265,10 @@ Excel.prototype.addCol = function(colIndex, width) {
         this.colHeaders[i].setContent(transformNumberIdToLetterId(i));
     }
 
+
     //如果新添加的列对它之后的列造成影响 则进行调整
     for(let i = 0; i < this.rowHeaders.length; ++i){
-        const row = this.cells[i];
-
-        //要将添加的这一列之后的所有列向后移动
-        for(let j = row.length - 1; j >= colIndex; --j){
-            if(row[j]){
-                row[j + 1] = row[j];
-                delete row[j];
-            }
-        }
+        this.cells[i].splice(colIndex, 0, undefined);
     }
 
     this.onChange(OnChangeActions.AddCol, colIndex);
@@ -251,15 +285,7 @@ Excel.prototype.removeCol = function(colIndex) {
 
     //如果删除的列对它之后的列造成影响 则进行调整
     for(let i = 0; i < this.rowHeaders.length; ++i){
-        const row = this.cells[i];
-
-        //要将删除的这一列之后的所有列向前移动
-        for(let j = colIndex; j < row.length - 1; ++j){
-            row[j] = row[j + 1];
-            if(row[j + 1]){
-                delete row[j + 1];
-            }
-        }
+        this.cells[i].splice(colIndex, 1);
     }
 
 
@@ -323,21 +349,6 @@ Excel.prototype.setCellContent = function(rowIndex, colIndex, content) {
     this.cells[rowIndex][colIndex].setContent(content);
 }
 
-
-Excel.prototype.toString = function() {
-    const stringBuilder = ["\n"];
-    for(let i = 0; i < this.rowHeaders.length; ++i){
-        for(let j = 0; j < this.colHeaders.length; ++j){
-            if(this.cells[i][j]){
-                stringBuilder.push(this.cells[i][j].getContent());
-            } else {
-                stringBuilder.push("-");
-            }
-        }
-        stringBuilder.push("\n");
-    }
-    return stringBuilder.join('');
-}
 
 function inheritPrototype(subType, superType){
     const subProto = {};//构造一个子类实例的的[[prototype]]
