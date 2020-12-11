@@ -60,6 +60,9 @@ ExcelEventHandler.prototype.bindEvent = function() {
     this.excelRenderer.removeColIndexBtn.addEventListener("click", removeCol);
 
 
+    keyDown = keyDown.bind(this);
+    document.addEventListener("keydown", keyDown);
+
     mouseUpOrMouseLeaveOnExcelPanel = mouseUpOrMouseLeaveOnExcelPanel.bind(this);
     this.excelRenderer.excelElement.addEventListener("mouseup", mouseUpOrMouseLeaveOnExcelPanel);
     this.excelRenderer.excelElement.addEventListener("mouseleave", mouseUpOrMouseLeaveOnExcelPanel);
@@ -88,7 +91,6 @@ function mouseDownCell(event){
     const x = event.pageX - this.excelRenderer.excelElement.offsetLeft - this.excelRenderer.colHeaderContainer.offsetLeft;
     const y = event.pageY - this.excelRenderer.rowHeaderContainer.offsetTop;
     const index = this.excelRenderer.transformCoordinateToIndex(x, y);
-    console.log(index.rowIndex, index.colIndex);
 
     if(index.rowIndex != this.excelRenderer.excel.activeCell.rowIndex || index.colIndex != this.excelRenderer.excel.activeCell.colIndex){
         //即将切换ActiveCell 向模型中保存输入的内容
@@ -321,5 +323,27 @@ function removeCol() {
     const colIndex = Number(this.excelRenderer.removeColIndexInput.value);
     if(!isNaN(colIndex) && colIndex > -1) {
         this.excelRenderer.excel.removeCol(colIndex - 1);
+    }
+}
+
+/**
+ * 键盘事件
+ */
+function keyDown(event) {
+    switch(event.code) {
+        case 'Enter' :
+
+            const rowIndex = this.excelRenderer.excel.activeCell.rowIndex;
+            const colIndex = this.excelRenderer.excel.activeCell.colIndex;
+            this.excelRenderer.excel.setCellContent(rowIndex, colIndex, this.excelRenderer.activeCell.innerHTML);
+            this.closeEdit();
+
+            this.excelRenderer.excel.setActiveCell(rowIndex + 1, colIndex);
+            this.excelRenderer.excel.setSelectionArea(rowIndex + 1, colIndex, rowIndex + 1, colIndex, SelectionType.Cells);
+        break;
+
+        case 'Space' :
+            this.openEdit();
+        break;
     }
 }
