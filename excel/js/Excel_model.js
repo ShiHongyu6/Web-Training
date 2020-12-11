@@ -106,19 +106,19 @@ function Excel(rowCount, colCount, cellWidth, cellHeight, rowHeaderWidth, colHea
 
     this.selectionArea = {
         leftTop : {
-            rowIndex: null,
-            colIndex: null
+            rowIndex: 0,
+            colIndex: 0
         },
         rightBottom: {
-            rowIndex: null,
-            colIndex: null
+            rowIndex: 0,
+            colIndex: 0
         }, 
-        selectionType : null
+        selectionType : SelectionType.Cells
     };
 
     this.activeCell = {
-        rowIndex: null,
-        colIndex: null
+        rowIndex: 0,
+        colIndex: 0
     }
 
     //命令的执行者
@@ -131,8 +131,9 @@ function Excel(rowCount, colCount, cellWidth, cellHeight, rowHeaderWidth, colHea
 Excel.prototype.setCommandExecutor = function(commandExecutor) {
     this.commandExecutor = commandExecutor;
 
-    excel.setActiveCell(0, 0);
-    excel.setSelectionArea(0, 0, 0, 0, SelectionType.Cells);
+    //同步选择框
+    excel.setActiveCell();
+    excel.setSelectionArea();
 }
 
 Excel.prototype.rowIndexBeInBoundary = function(rowIndex) {
