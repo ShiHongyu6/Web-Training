@@ -9,7 +9,7 @@ const INIT_INFO = {
     SELECT_BORDER : 2
 };
 
-const excel = new Excel(100, 30, 73, 18, 30, 26);
+const excel = new Excel(20, 10, 73, 18, 30, 26);
 
 
 window.onload = function() {

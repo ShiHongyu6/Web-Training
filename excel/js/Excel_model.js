@@ -180,6 +180,9 @@ Excel.prototype.setColWidth = function(colIndex, width) {
 
     this.colHeaders[colIndex].setWidth(width);
     this.commandExecutor.execute(new ModifyColWidth({colIndex, width}));
+    //修改宽度后  同步选择框
+    this.setActiveCell();
+    this.setSelectionArea();
 }
 
 Excel.prototype.setRowHeight = function(rowIndex, height) {
@@ -192,6 +195,9 @@ Excel.prototype.setRowHeight = function(rowIndex, height) {
     }
     this.rowHeaders[rowIndex].setHeight(height);
     this.commandExecutor.execute(new ModifyRowHeight({rowIndex, height}));
+
+    this.setActiveCell();
+    this.setSelectionArea();
 }
 
 /**
@@ -200,63 +206,65 @@ Excel.prototype.setRowHeight = function(rowIndex, height) {
  * }
  */
 Excel.prototype.setSelectionArea = function(leftTopRowIndex, leftTopColIndex, rightBottomRowIndex, rightBottomColIndex, selectionType){
-    if(!this.rowIndexBeInBoundary(leftTopRowIndex)){
-        throw new Error("row-index out of bounds: index should greater than -1 and less than " + this.rowHeaders.length);
+    //仅在参数个数满足时 才会更改  否则  仅以当前值发送命令
+    if(arguments.length == 5) {
+        if(!this.rowIndexBeInBoundary(leftTopRowIndex)){
+            throw new Error("row-index out of bounds: index should greater than -1 and less than " + this.rowHeaders.length);
+        }
+        if(!this.rowIndexBeInBoundary(rightBottomRowIndex)){
+            throw new Error("row-index out of bounds: index should greater than -1 and less than " + this.rowHeaders.length);
+        }
+        if(!this.colIndexBeInBoundary(leftTopColIndex)){
+            throw new Error("col-index out of bounds: index should greater than -1 and less than " + this.colHeaders.length);
+        }
+        if(!this.colIndexBeInBoundary(rightBottomColIndex)){
+            throw new Error("col-index out of bounds: index should greater than -1 and less than " + this.colHeaders.length);
+        }
+        this.selectionArea.leftTop.rowIndex = leftTopRowIndex;
+        this.selectionArea.leftTop.colIndex = leftTopColIndex;
+        this.selectionArea.rightBottom.rowIndex = rightBottomRowIndex;
+        this.selectionArea.rightBottom.colIndex = rightBottomColIndex;
+        this.selectionArea.selectionType = selectionType;
     }
-    if(!this.rowIndexBeInBoundary(rightBottomRowIndex)){
-        throw new Error("row-index out of bounds: index should greater than -1 and less than " + this.rowHeaders.length);
-    }
-    if(!this.colIndexBeInBoundary(leftTopColIndex)){
-        throw new Error("col-index out of bounds: index should greater than -1 and less than " + this.colHeaders.length);
-    }
-    if(!this.colIndexBeInBoundary(rightBottomColIndex)){
-        throw new Error("col-index out of bounds: index should greater than -1 and less than " + this.colHeaders.length);
-    }
-
-    const lastLeftTopRowIndex = this.selectionArea.leftTop.rowIndex;
-    const lastLeftTopColIndex = this.selectionArea.leftTop.colIndex;
-    const lastRightBottomRowIndex = this.selectionArea.rightBottom.rowIndex;
-    const lastRightBottomColIndex = this.selectionArea.rightBottom.colIndex;
-
-    this.selectionArea.leftTop.rowIndex = leftTopRowIndex;
-    this.selectionArea.leftTop.colIndex = leftTopColIndex;
-    this.selectionArea.rightBottom.rowIndex = rightBottomRowIndex;
-    this.selectionArea.rightBottom.colIndex = rightBottomColIndex;
-    this.selectionArea.selectionType = selectionType;
-    this.commandExecutor.execute(new ModifySelectionArea({lastLeftTopRowIndex, lastLeftTopColIndex, lastRightBottomRowIndex, lastRightBottomColIndex, leftTopRowIndex, leftTopColIndex, rightBottomRowIndex, rightBottomColIndex, selectionType}));
+    this.commandExecutor.execute(new ModifySelectionArea({
+        leftTopRowIndex : this.selectionArea.leftTop.rowIndex, 
+        leftTopColIndex : this.selectionArea.leftTop.colIndex,
+        rightBottomRowIndex : this.selectionArea.rightBottom.rowIndex, 
+        rightBottomColIndex : this.selectionArea.rightBottom.colIndex, 
+        selectionType : this.selectionArea.selectionType}));
 }
+
+
+
 
 Excel.prototype.setActiveCell = function(rowIndex, colIndex) {
-    if(!this.rowIndexBeInBoundary(rowIndex)){
-        throw new Error("row-index out of bounds: index should greater than -1 and less than " + this.rowHeaders.length);
-    }
-    if(!this.colIndexBeInBoundary(colIndex)){
-        throw new Error("col-index out of bounds: index should greater than -1 and less than " + this.colHeaders.length);
+
+    if(arguments.length == 2){
+        if(!this.rowIndexBeInBoundary(rowIndex)){
+            throw new Error("row-index out of bounds: index should greater than -1 and less than " + this.rowHeaders.length);
+        }
+        if(!this.colIndexBeInBoundary(colIndex)){
+            throw new Error("col-index out of bounds: index should greater than -1 and less than " + this.colHeaders.length);
+        }
+        
+        this.activeCell.rowIndex = rowIndex;
+        this.activeCell.colIndex = colIndex;
     }
 
-    this.activeCell.rowIndex = rowIndex;
-    this.activeCell.colIndex = colIndex;
-    const activeCellWidth  = this.colHeaders[colIndex].width;
-    const activeCellHeight = this.rowHeaders[rowIndex].height;
+    const activeCellWidth  = this.colHeaders[this.activeCell.colIndex].getWidth();
+    const activeCellHeight = this.rowHeaders[this.activeCell.rowIndex].getHeight();
     let cellContent = "";
-    if(this.cells[rowIndex][colIndex] && this.cells[rowIndex][colIndex].getContent()) {
-        cellContent = this.cells[rowIndex][colIndex].getContent();
+    if(this.cells[this.activeCell.rowIndex][this.activeCell.colIndex] && this.cells[this.activeCell.rowIndex][this.activeCell.colIndex].getContent()) {
+        cellContent = this.cells[this.activeCell.rowIndex][this.activeCell.colIndex].getContent();
     } 
 
-    this.commandExecutor.execute(new ModifyActiveCell({colIndex, rowIndex, activeCellWidth, activeCellHeight, cellContent}));
+    this.commandExecutor.execute(new ModifyActiveCell({
+        colIndex : this.activeCell.colIndex, 
+        rowIndex : this.activeCell.rowIndex, 
+        activeCellWidth, 
+        activeCellHeight, 
+        cellContent}));
 }
-
-// Excel.prototype.setEditingCell = function(rowIndex, colIndex) {
-//     if(!this.rowIndexBeInBoundary(rowIndex)){
-//         throw new Error("row-index out of bounds: index should greater than -1 and less than " + this.rowHeaders.length);
-//     }
-//     if(!this.colIndexBeInBoundary(colIndex)){
-//         throw new Error("col-index out of bounds: index should greater than -1 and less than " + this.colHeaders.length);
-//     }
-//     this.editingCell.rowIndex = rowIndex;
-//     this.editingCell.colIndex = colIndex;
-//     this.onChange(OnChangeAction.OpenEdit, this.editingCell);
-// }
 
 
 Excel.prototype.addCol = function(colIndex, width) {
@@ -273,13 +281,25 @@ Excel.prototype.addCol = function(colIndex, width) {
         this.colHeaders[i].setContent(transformNumberIdToLetterId(i));
     }
 
-
     //如果新添加的列对它之后的列造成影响 则进行调整
     for(let i = 0; i < this.rowHeaders.length; ++i){
         this.cells[i].splice(colIndex, 0, undefined);
     }
 
-    this.commandExecutor.execute(new Refresh(null));
+
+    if(colIndex <= this.selectionArea.rightBottom.colIndex){
+        ++this.selectionArea.rightBottom.colIndex;
+        if(colIndex <= this.selectionArea.leftTop.colIndex){
+            ++this.selectionArea.leftTop.colIndex;
+        }
+    }
+
+    if(colIndex <= this.activeCell.colIndex) {
+        ++this.activeCell.colIndex;
+    }
+
+
+    this.commandExecutor.execute(new Refresh());
 }
 
 Excel.prototype.removeCol = function(colIndex) {
@@ -297,7 +317,20 @@ Excel.prototype.removeCol = function(colIndex) {
     }
 
 
-    this.commandExecutor.execute(new Refresh(null));
+    if(colIndex <= this.selectionArea.rightBottom.colIndex){
+        --this.selectionArea.rightBottom.colIndex;
+        if(colIndex < this.selectionArea.leftTop.colIndex){
+            --this.selectionArea.leftTop.colIndex;
+        }
+    }
+
+    if(colIndex < this.activeCell.colIndex) {
+        --this.activeCell.colIndex;
+    }
+
+
+
+    this.commandExecutor.execute(new Refresh());
 }
 
 Excel.prototype.addRow = function(rowIndex, height) {
@@ -314,7 +347,19 @@ Excel.prototype.addRow = function(rowIndex, height) {
     }
 
     this.cells.splice(rowIndex, 0, new Array(0));
-    this.commandExecutor.execute(new Refresh(null));
+
+    if(rowIndex <= this.selectionArea.rightBottom.rowIndex){
+        ++this.selectionArea.rightBottom.rowIndex;
+        if(rowIndex <= this.selectionArea.leftTop.rowIndex){
+            ++this.selectionArea.leftTop.rowIndex;
+        }
+    }
+
+    if(rowIndex <= this.activeCell.rowIndex) {
+        ++this.activeCell.rowIndex;
+    }
+
+    this.commandExecutor.execute(new Refresh());
 }
 
 Excel.prototype.removeRow = function(rowIndex) {
@@ -326,7 +371,19 @@ Excel.prototype.removeRow = function(rowIndex) {
     for(let i = rowIndex; i < this.rowHeaders.length; ++i) {
         this.rowHeaders[i].setContent(i + 1);
     }
-    this.commandExecutor.execute(new Refresh(null));
+
+    if(rowIndex <= this.selectionArea.rightBottom.rowIndex){
+        --this.selectionArea.rightBottom.rowIndex;
+        if(rowIndex < this.selectionArea.leftTop.rowIndex){
+            --this.selectionArea.leftTop.rowIndex;
+        }
+    }
+
+    if(rowIndex < this.activeCell.rowIndex) {
+        --this.activeCell.rowIndex;
+    }
+
+    this.commandExecutor.execute(new Refresh());
 }
 
 Excel.prototype.setColHeaderContent = function(colIndex, content) {

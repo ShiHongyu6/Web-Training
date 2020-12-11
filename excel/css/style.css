@@ -1,6 +1,6 @@
 *{
     margin: 0;
-    border: 0;
+    outline: none;
     padding: 0;
 }
 
@@ -65,7 +65,6 @@
 .excel__col-header-container {
     display: flex;
     position: relative;
-    flex: 0 0 auto;
 }
 
 
@@ -74,6 +73,9 @@
     background-color: #e6e6e6;
     justify-content: center;
     align-items: flex-end;
+    flex-shrink: 0;
+    flex-grow: 0;
+    /* flex-basis: 0; */
 }
 
 
@@ -92,7 +94,8 @@
     display: flex;
     flex-direction: column;
     flex-wrap: wrap;
-    flex: 1 1 0;
+    flex-shrink: 0;
+    flex-grow: 0;
 }
 
 .excel__cells-container:hover {
@@ -103,7 +106,8 @@
     display: flex;
     justify-content: flex-start;
     outline: none;
-    flex: 1 1 0;
+    flex-shrink: 0;
+    flex-grow: 1;
 }
 
 .excel__cells-container > div[contenteditable="true"]:hover {
@@ -117,24 +121,6 @@
     justify-content: center;
     align-items: center;
 }
-/* 
-.excel__row-header-container > div.excel__row-header--cell-selected{
-    position: relative;
-    background-color: #d2d2d2;
-    border-right-color: #087772;
-    color:#087772;
-}
-
-.excel__row-header-container > div.excel__row-header--cell-selected::after{
-    content: "";
-    display: flex;
-    position: absolute;
-    align-self: flex-end;
-    height: 100%;
-    border-right: 2px solid #087772;
-} */
-
-
 
 .excel__icon--all-select, .excel__col-header-container > div, .excel__row-header-container > div , .excel__cells-container > div > div{
     border-style: solid;
@@ -195,4 +181,20 @@
     border-style: none;
     border-color: #087772;
     border-right-style: solid;
+}
+
+.excel__col-header-container > div.hover:hover , .excel__row-header-container > div.hover:hover{
+    background-color :rgba(159, 205, 179);
+}
+
+.resize {
+    background-color:  #e6e6e6;
+}
+
+.excel__col-header-container.resize {
+    cursor: col-resize;
+}
+
+.excel__row-header-container.resize {
+    cursor: row-resize;
 }

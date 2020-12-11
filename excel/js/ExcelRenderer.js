@@ -16,6 +16,19 @@ function ExcelRenderer(excel, cellBorder){
     
     //填充文档树
     this.init();
+
+
+    this.addRowIndexBtn = document.getElementById("addRowIndexBtn");
+    this.addColIndexBtn = document.getElementById("addColIndexBtn");
+    
+    this.removeRowIndexBtn = document.getElementById("removeRowIndexBtn");
+    this.removeColIndexBtn = document.getElementById("removeColIndexBtn");
+    
+    this.addRowIndexInput = document.getElementById("addRowIndexInput");
+    this.addColIndexInput = document.getElementById("addColIndexInput");
+
+    this.removeRowIndexInput = document.getElementById("removeRowIndexInput");
+    this.removeColIndexInput = document.getElementById("removeColIndexInput");
 }
 
 //继承命令模式中的执行者
@@ -35,12 +48,12 @@ ExcelRenderer.prototype.getDomElement = function() {
     //选择时header效果
     this.colHeaderSelectBox = this.colHeaderContainer.querySelector(".col-header__select-box");
     this.rowHeaderSelectBox = this.rowHeaderContainer.querySelector(".row-header__select-box");
+
     //用来存储colHeader的DOM
     this.colHeaderElements = [];
     //用来存储rowHeader的DOM
     this.rowHeaderElements = [];
     //这些DOM节点都存储了各自行/列的样式(style节点)  可通过修改这个style节点的innerHTML来修改样式
-
     this.cellElements = [];
 
 
@@ -275,9 +288,9 @@ ExcelRenderer.prototype.refresh = function() {
     //重新构建文档树
     this.init();
 
-    //默认选择(0, 0)
-    excel.setActiveCell(0, 0);
-    excel.setSelectionArea(0, 0, 0, 0, SelectionType.Cells);
+    //同步当前的选择区域
+    this.excel.setActiveCell();
+    this.excel.setSelectionArea();
 }
 
 
