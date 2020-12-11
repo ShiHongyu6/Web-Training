@@ -75,7 +75,7 @@
     align-items: flex-end;
     flex-shrink: 0;
     flex-grow: 0;
-    /* flex-basis: 0; */
+    overflow: hidden;
 }
 
 
@@ -120,6 +120,7 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    overflow: hidden;
 }
 
 .excel__icon--all-select, .excel__col-header-container > div, .excel__row-header-container > div , .excel__cells-container > div > div{

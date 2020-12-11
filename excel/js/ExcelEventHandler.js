@@ -132,7 +132,7 @@ function mouseDownColHeader(event){
         this.resize = true;
 
         //记录相对位置
-        this.resizeRelative = x - this.excelRenderer.colHeaderElements[this.resizeIndex + 1].offsetLeft;
+        this.resizeRelative = x - (this.excelRenderer.colHeaderElements[this.resizeIndex].offsetLeft + Math.ceil(this.excelRenderer.colHeaderElements[this.resizeIndex].clientWidth));
 
 
         //开启拖拽
@@ -158,7 +158,7 @@ function mouseDownRowHeader(event){
         this.excelRenderer.excel.setSelectionArea(index.rowIndex, 0, index.rowIndex, this.excelRenderer.excel.colHeaders.length - 1, SelectionType.FullRow);
     } else {
         this.resize = true;
-        this.resizeRelative = y - this.excelRenderer.rowHeaderElements[this.resizeIndex + 1].offsetTop;
+        this.resizeRelative = y - (this.excelRenderer.rowHeaderElements[this.resizeIndex].offsetTop + Math.ceil(this.excelRenderer.rowHeaderElements[this.resizeIndex].clientWidth));
 
         //开启拖拽
         this.excelRenderer.excelElement.addEventListener("mousemove", mouseMoveToResizeRow);
@@ -241,7 +241,7 @@ function mouseMoveOnColHeader(event) {
         this.excelRenderer.colHeaderContainer.classList.add("resize");
         this.resizeIndex = index.colIndex - 1;
     }
-    if(-(x - headerElement.offsetLeft - headerElement.clientWidth) < 5 && index.colIndex < this.excelRenderer.colHeaderElements.length - 1) {
+    if(-(x - headerElement.offsetLeft - headerElement.clientWidth) < 5) {
         headerElement.classList.remove("hover");
         this.excelRenderer.colHeaderContainer.classList.add("resize");
         this.resizeIndex = index.colIndex;
@@ -265,7 +265,7 @@ function mouseMoveOnRowHeader(event) {
     this.excelRenderer.rowHeaderContainer.classList.remove("resize");
 
 
-    if(y - headerElement.offsetTop < 5){
+    if(y - headerElement.offsetTop < 5 && index.rowIndex > 0){
         headerElement.classList.remove("hover");
         this.excelRenderer.rowHeaderContainer.classList.add("resize");
         this.resizeIndex = index.rowIndex - 1;
@@ -282,12 +282,16 @@ function mouseMoveToResizeCol(event) {
     
     const colHeaderElement = this.excelRenderer.colHeaderElements[this.resizeIndex];
     const width = event.pageX - this.excelRenderer.colHeaderContainer.offsetLeft - colHeaderElement.offsetLeft - this.resizeRelative;
+    if(width < 0)
+        return ;
     this.excelRenderer.excel.setColWidth(this.resizeIndex, width);
 }
 
 function mouseMoveToResizeRow(event) {
     const rowHeaderElement = this.excelRenderer.rowHeaderElements[this.resizeIndex];
     const height = event.pageY - this.excelRenderer.rowHeaderContainer.offsetTop - rowHeaderElement.offsetTop - this.resizeRelative;
+    if(height < 0)
+        return ;
     this.excelRenderer.excel.setRowHeight(this.resizeIndex, height);
 }
 

@@ -304,6 +304,10 @@ Excel.prototype.addCol = function(colIndex, width) {
 }
 
 Excel.prototype.removeCol = function(colIndex) {
+
+    if(this.colHeaders.length == 1)
+        return ;
+
     if(!this.colIndexBeInBoundary(colIndex)){
         throw new Error("col-index out of bounds: index should greater than -1 and less than " + this.colHeaders.length);
     }
@@ -317,8 +321,11 @@ Excel.prototype.removeCol = function(colIndex) {
         this.cells[i].splice(colIndex, 1);
     }
 
-
-    if(colIndex <= this.selectionArea.rightBottom.colIndex){
+    if(colIndex == this.selectionArea.rightBottom.colIndex && this.selectionArea.rightBottom.colIndex == this.selectionArea.leftTop.colIndex) {
+        //这一行删除干净 默认选择(0, 0)
+        this.setActiveCell(0, 0)
+        this.setSelectionArea(0, 0, 0, 0, SelectionType.Cells);
+    } else if(colIndex <= this.selectionArea.rightBottom.colIndex){
         --this.selectionArea.rightBottom.colIndex;
         if(colIndex < this.selectionArea.leftTop.colIndex){
             --this.selectionArea.leftTop.colIndex;
@@ -328,8 +335,6 @@ Excel.prototype.removeCol = function(colIndex) {
     if(colIndex < this.activeCell.colIndex) {
         --this.activeCell.colIndex;
     }
-
-
 
     this.commandExecutor.execute(new Refresh());
 }
@@ -364,6 +369,10 @@ Excel.prototype.addRow = function(rowIndex, height) {
 }
 
 Excel.prototype.removeRow = function(rowIndex) {
+
+    if(this.rowHeaders.length == 1)
+        return ;
+
     if(!this.rowIndexBeInBoundary(rowIndex)){
         throw new Error("row-index out of bounds: index should greater than -1 and less than " + this.rowHeaders.length);
     }
@@ -373,17 +382,20 @@ Excel.prototype.removeRow = function(rowIndex) {
         this.rowHeaders[i].setContent(i + 1);
     }
 
-    if(rowIndex <= this.selectionArea.rightBottom.rowIndex){
-        --this.selectionArea.rightBottom.rowIndex;
-        if(rowIndex < this.selectionArea.leftTop.rowIndex){
-            --this.selectionArea.leftTop.rowIndex;
-        }
+    if(rowIndex == this.selectionArea.rightBottom.rowIndex && this.selectionArea.rightBottom.rowIndex == this.selectionArea.leftTop.rowIndex) {
+        //这一行删除干净 默认选择(0, 0)
+        this.setActiveCell(0, 0)
+        this.setSelectionArea(0, 0, 0, 0, SelectionType.Cells);
+    } else if(rowIndex <= this.selectionArea.rightBottom.rowIndex){
+            --this.selectionArea.rightBottom.rowIndex;
+            if(rowIndex < this.selectionArea.leftTop.rowIndex){
+                --this.selectionArea.leftTop.rowIndex;
+            }
     }
 
     if(rowIndex < this.activeCell.rowIndex) {
         --this.activeCell.rowIndex;
     }
-
     this.commandExecutor.execute(new Refresh());
 }
 
